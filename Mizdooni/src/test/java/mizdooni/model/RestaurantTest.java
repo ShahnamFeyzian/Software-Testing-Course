@@ -1,6 +1,7 @@
 package mizdooni.model;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,22 +15,20 @@ public class RestaurantTest {
     private List<Review> reviews;
 
     private void setupTables() {
-        tables = new ArrayList<>() {{
-            ModelTestUtils.getTableForRestaurant(restaurant);
-            ModelTestUtils.getTableForRestaurant(restaurant);
-            ModelTestUtils.getTableForRestaurant(restaurant);
-        }};
+        tables = new ArrayList<>();
+        tables.add(ModelTestUtils.getTableForRestaurant(restaurant));
+        tables.add(ModelTestUtils.getTableForRestaurant(restaurant));
+        tables.add(ModelTestUtils.getTableForRestaurant(restaurant));
         for (Table table : tables) {
             restaurant.addTable(table);
         }
     }
 
     private void setupClients() {
-        clients = new ArrayList<>() {{
-            ModelTestUtils.getDefaultClientUserWithName("client1");
-            ModelTestUtils.getDefaultClientUserWithName("client2");
-            ModelTestUtils.getDefaultClientUserWithName("client3");
-        }};
+        clients = new ArrayList<>();
+        clients.add(ModelTestUtils.getDefaultClientUserWithName("client1"));
+        clients.add(ModelTestUtils.getDefaultClientUserWithName("client2"));
+        clients.add(ModelTestUtils.getDefaultClientUserWithName("client3"));
     }
 
     private void setupReviews() {
@@ -47,5 +46,22 @@ public class RestaurantTest {
         setupTables();
         setupClients();
         setupReviews();
+    }
+
+    @Test
+    public void getTable_GiveValidNumber_ReturnsTableWithGivenNumber() {
+        int targetNumber = 2;
+        Table targetTable = restaurant.getTable(targetNumber);
+
+        assertThat(targetTable).isNotNull();
+        assertThat(targetTable.getTableNumber()).isEqualTo(targetNumber);
+    }
+
+    @Test
+    public void getTable_GiveInvalidNumber_ReturnsNullTable() {
+        int targetNumber = 5;
+        Table targetTable = restaurant.getTable(targetNumber);
+
+        assertThat(targetTable).isNull();
     }
 }

@@ -64,4 +64,16 @@ public class RestaurantTest {
 
         assertThat(targetTable).isNull();
     }
+
+    @Test
+    public void addTable_AddNewTable_ItsTableNumberAndRestaurantTableListSizeIncreasesByOne() {
+        restaurant.addTable(ModelTestUtils.getTableForRestaurant(restaurant));
+
+        List<Table> restaurantTables = restaurant.getTables();
+        Table newTable = restaurantTables.getLast();
+        int expectedTableNumberAndListSize = 4;
+
+        assertThat(restaurantTables).hasSize(expectedTableNumberAndListSize);
+        assertThat(newTable.getTableNumber()).isEqualTo(expectedTableNumberAndListSize);
+    }
 }

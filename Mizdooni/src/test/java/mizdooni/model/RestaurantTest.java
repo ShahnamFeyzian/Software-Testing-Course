@@ -76,4 +76,31 @@ public class RestaurantTest {
         assertThat(restaurantTables).hasSize(expectedTableNumberAndListSize);
         assertThat(newTable.getTableNumber()).isEqualTo(expectedTableNumberAndListSize);
     }
+
+    @Test
+    public void addReview_ReviewWithNewUser_AddsReviewToRestaurantReviewList() {
+        User newUser = ModelTestUtils.getDefaultClientUser();
+        Review newReview = ModelTestUtils.getReviewForUser(newUser);
+
+        restaurant.addReview(newReview);
+        List<Review> restaurantReviews = restaurant.getReviews();
+        Review addedReview = restaurantReviews.getLast();
+
+        assertThat(restaurantReviews).hasSize(4);
+        assertThat(addedReview.getUser()).isEqualTo(newUser);
+    }
+
+    @Test
+    public void addReview_ReviewWithUserThatAlreadyHasReview_DeletesPreviousReview() {
+        User repeatedUser = clients.getFirst();
+        Review repeatedUserReview = ModelTestUtils.getReviewForUser(repeatedUser);
+
+        restaurant.addReview(repeatedUserReview);
+        List<Review> restaurantReviews = restaurant.getReviews();
+        int previousReviewIndex = 0;
+        Review newReview = restaurantReviews.getLast();
+
+        assertThat(restaurantReviews.get(previousReviewIndex).getUser()).isNotEqualTo(repeatedUser);
+        assertThat(newReview).isEqualTo(repeatedUserReview);
+    }
 }

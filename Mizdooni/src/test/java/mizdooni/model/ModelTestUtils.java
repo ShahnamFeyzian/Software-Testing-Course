@@ -20,42 +20,43 @@ public class ModelTestUtils {
     public static final double DEFAULT_RATING_NUMBER = 4.5;
 
 
-    public Rating getDefaultRating() {
+    public static Rating getDefaultRating() {
         return new Rating(DEFAULT_RATING_NUMBER, DEFAULT_RATING_NUMBER, DEFAULT_RATING_NUMBER, DEFAULT_RATING_NUMBER);
     }
 
-    public Address getDefaultAddress() {
+    public static Address getDefaultAddress() {
         return new Address(DEFAULT_COUNTRY, DEFAULT_CITY, DEFAULT_STREET);
     }
 
-    public User getDefaultClientUser() {
+    public static User getDefaultClientUser() {
         return new User(DEFAULT_NAME, DEFAULT_PASS, DEFAULT_EMAIL, getDefaultAddress(), User.Role.client);
     }
 
-    public User getDefaultManagerUser() {
+    public static User getDefaultClientUserWithName(String name) {
+        return new User(name, DEFAULT_PASS, DEFAULT_EMAIL, getDefaultAddress(), User.Role.client);
+    }
+
+    public static User getDefaultManagerUser() {
         return new User(DEFAULT_NAME, DEFAULT_PASS, DEFAULT_EMAIL, getDefaultAddress(), User.Role.manager);
     }
 
-    public Table getTableForRestaurant(Restaurant restaurant) {
-        int tableNumber = getTableNumberForRestaurant(restaurant);
-        return new Table(tableNumber, restaurant.getId(), DEFAULT_SEATS_NUMBER);
+    public static User getDefaultManagerUserWithName(String name) {
+        return new User(name, DEFAULT_PASS, DEFAULT_EMAIL, getDefaultAddress(), User.Role.manager);
     }
 
-    public Review getReviewForUser(User user) {
+    public static Table getTableForRestaurant(Restaurant restaurant) {
+        return new Table(0, restaurant.getId(), DEFAULT_SEATS_NUMBER);
+    }
+
+    public static Review getReviewForUser(User user) {
         return new Review(user, getDefaultRating(), DEFAULT_COMMENT, DEFAULT_LOCAL_DATE_TIME);
     }
 
-    public Restaurant getDefaultRestaurant() {
+    public static Restaurant getDefaultRestaurant() {
         return new Restaurant(
                 DEFAULT_NAME, getDefaultManagerUser(),
                 DEFAULT_TYPE, DEFAULT_LOCAL_TIME, DEFAULT_LOCAL_TIME,
                 DEFAULT_DESCRIPTION,getDefaultAddress(), DEFAULT_IMAGE_LINK
         );
-    }
-
-    private int getTableNumberForRestaurant(Restaurant restaurant) {
-        int currentTableNumber = restaurant.getTables().size() - 1;
-        int nextTableNumber = currentTableNumber++;
-        return nextTableNumber;
     }
 }

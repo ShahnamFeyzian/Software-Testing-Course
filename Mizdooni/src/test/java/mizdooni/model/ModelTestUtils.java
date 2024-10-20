@@ -2,6 +2,8 @@ package mizdooni.model;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ModelTestUtils {
     public static final String DEFAULT_COUNTRY = "country";
@@ -22,6 +24,14 @@ public class ModelTestUtils {
 
     public static Rating getDefaultRating() {
         return new Rating(DEFAULT_RATING_NUMBER, DEFAULT_RATING_NUMBER, DEFAULT_RATING_NUMBER, DEFAULT_RATING_NUMBER);
+    }
+
+    public static Rating getRandomRating() {
+        double food = Math.random()*100;
+        double service = Math.random()*100;
+        double ambiance = Math.random()*100;
+        double overall = Math.random()*100;
+        return new Rating(food, service, ambiance, overall);
     }
 
     public static Address getDefaultAddress() {
@@ -48,8 +58,23 @@ public class ModelTestUtils {
         return new Table(0, restaurant.getId(), DEFAULT_SEATS_NUMBER);
     }
 
-    public static Review getReviewForUser(User user) {
+    public static void addTablesToRestaurant(Restaurant restaurant, int num) {
+        for (int i = 0; i < num; i++) {
+            Table table = getTableForRestaurant(restaurant);
+            restaurant.addTable(table);
+        }
+    }
+
+    public static Review getReviewWithDefaultRatingForUser(User user) {
         return new Review(user, getDefaultRating(), DEFAULT_COMMENT, DEFAULT_LOCAL_DATE_TIME);
+    }
+
+    public static void addReviewsWithDefaultRatingWithUniqueUserToRestaurant(Restaurant restaurant, int num) {
+        for (int i = 0; i < num; i++) {
+            User user = getDefaultClientUserWithName("client" + i);
+            Review review = getReviewWithDefaultRatingForUser(user);
+            restaurant.addReview(review);
+        }
     }
 
     public static Restaurant getDefaultRestaurant() {

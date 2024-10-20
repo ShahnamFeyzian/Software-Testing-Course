@@ -10,42 +10,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class RestaurantTest {
     private Restaurant restaurant;
-    private List<Table> tables;
-    private List<User> clients;
-    private List<Review> reviews;
-
-    private void setupTables() {
-        tables = new ArrayList<>();
-        tables.add(ModelTestUtils.getTableForRestaurant(restaurant));
-        tables.add(ModelTestUtils.getTableForRestaurant(restaurant));
-        tables.add(ModelTestUtils.getTableForRestaurant(restaurant));
-        for (Table table : tables) {
-            restaurant.addTable(table);
-        }
-    }
-
-    private void setupClients() {
-        clients = new ArrayList<>();
-        clients.add(ModelTestUtils.getDefaultClientUserWithName("client1"));
-        clients.add(ModelTestUtils.getDefaultClientUserWithName("client2"));
-        clients.add(ModelTestUtils.getDefaultClientUserWithName("client3"));
-    }
-
-    private void setupReviews() {
-        reviews = new ArrayList<>();
-        for (User client : clients) {
-            Review review = ModelTestUtils.getReviewForUser(client);
-            reviews.add(review);
-            restaurant.addReview(review);
-        }
-    }
 
     @BeforeEach
     public void setup() {
         restaurant = ModelTestUtils.getDefaultRestaurant();
-        setupTables();
-        setupClients();
-        setupReviews();
+        ModelTestUtils.addTablesToRestaurant(restaurant, 3);
+        ModelTestUtils.addReviewsWithDefaultRatingWithUniqueUserToRestaurant(restaurant, 3);
     }
 
     @Test
@@ -80,7 +50,7 @@ public class RestaurantTest {
     @Test
     public void addReview_ReviewWithNewUser_AddsReviewToRestaurantReviewList() {
         User newUser = ModelTestUtils.getDefaultClientUser();
-        Review newReview = ModelTestUtils.getReviewForUser(newUser);
+        Review newReview = ModelTestUtils.getReviewWithDefaultRatingForUser(newUser);
 
         restaurant.addReview(newReview);
         List<Review> restaurantReviews = restaurant.getReviews();
@@ -92,8 +62,8 @@ public class RestaurantTest {
 
     @Test
     public void addReview_ReviewWithUserThatAlreadyHasReview_DeletesPreviousReview() {
-        User repeatedUser = clients.getFirst();
-        Review repeatedUserReview = ModelTestUtils.getReviewForUser(repeatedUser);
+        User repeatedUser = restaurant.getReviews().getFirst().getUser();
+        Review repeatedUserReview = ModelTestUtils.getReviewWithDefaultRatingForUser(repeatedUser);
 
         restaurant.addReview(repeatedUserReview);
         List<Review> restaurantReviews = restaurant.getReviews();

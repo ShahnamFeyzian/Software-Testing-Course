@@ -3,6 +3,8 @@ package mizdooni.model;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import static org.mockito.Mockito.*;
+
 public class ModelTestUtils {
     public static final String DEFAULT_COUNTRY = "country";
     public static final String DEFAULT_CITY = "city";
@@ -118,5 +120,9 @@ public class ModelTestUtils {
         return new Reservation(
                 user , restaurant , table , DEFAULT_LOCAL_DATE_TIME
         );
+    }
+
+    public static Reservation getDummyReservation() {
+        return mock(Reservation.class);
     }
 }

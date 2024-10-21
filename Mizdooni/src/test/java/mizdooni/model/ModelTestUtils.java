@@ -2,8 +2,6 @@ package mizdooni.model;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ModelTestUtils {
     public static final String DEFAULT_COUNTRY = "country";
@@ -54,13 +52,25 @@ public class ModelTestUtils {
         return new User(name, DEFAULT_PASS, DEFAULT_EMAIL, getDefaultAddress(), User.Role.manager);
     }
 
-    public static Table getTableForRestaurant(Restaurant restaurant) {
+    public static Table getTableWithDefaultSeatsForRestaurant(Restaurant restaurant) {
         return new Table(0, restaurant.getId(), DEFAULT_SEATS_NUMBER);
     }
 
-    public static void addTablesToRestaurant(Restaurant restaurant, int num) {
+    public static Table getTableWithRandomSeatsForRestaurant(Restaurant restaurant) {
+        int randomSeats = (int) Math.floor(Math.random()*100);
+        return new Table(0, restaurant.getId(), randomSeats);
+    }
+
+    public static void addTablesWithDefaultSeatsToRestaurant(Restaurant restaurant, int num) {
         for (int i = 0; i < num; i++) {
-            Table table = getTableForRestaurant(restaurant);
+            Table table = getTableWithDefaultSeatsForRestaurant(restaurant);
+            restaurant.addTable(table);
+        }
+    }
+
+    public static void addTablesWithRandomSeatsToRestaurant(Restaurant restaurant, int num) {
+        for (int i = 0; i < num; i++) {
+            Table table = getTableWithRandomSeatsForRestaurant(restaurant);
             restaurant.addTable(table);
         }
     }

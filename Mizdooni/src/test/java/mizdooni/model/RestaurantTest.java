@@ -14,7 +14,7 @@ public class RestaurantTest {
     @BeforeEach
     public void setup() {
         restaurant = ModelTestUtils.getDefaultRestaurant();
-        ModelTestUtils.addTablesToRestaurant(restaurant, 3);
+        ModelTestUtils.addTablesWithDefaultSeatsToRestaurant(restaurant, 3);
         ModelTestUtils.addReviewsWithDefaultRatingWithUniqueUserToRestaurant(restaurant, 3);
     }
 
@@ -37,7 +37,7 @@ public class RestaurantTest {
 
     @Test
     public void addTable_AddNewTable_ItsTableNumberAndRestaurantTableListSizeIncreasesByOne() {
-        restaurant.addTable(ModelTestUtils.getTableForRestaurant(restaurant));
+        restaurant.addTable(ModelTestUtils.getTableWithDefaultSeatsForRestaurant(restaurant));
 
         List<Table> restaurantTables = restaurant.getTables();
         Table newTable = restaurantTables.getLast();
@@ -114,5 +114,27 @@ public class RestaurantTest {
 
         verify(spyRestaurant).getAverageRating();
         verify(spyRestaurant).getStarCount();
+    }
+
+    @Test
+    public void getMaxSeatsNumber_RestaurantWithNoTable_ReturnsZero() {
+        Restaurant tempRestaurant = ModelTestUtils.getDefaultRestaurant();
+
+        int maxSeatsNumber = tempRestaurant.getMaxSeatsNumber();
+
+        assertThat(maxSeatsNumber).isZero();
+    }
+
+    @Test
+    public void getMaxSeatsNumber_RestaurantWithTwoRandomTables_ReturnsBiggerNumber() {
+        Restaurant restaurantWithRandomTables = ModelTestUtils.getDefaultRestaurant();
+        ModelTestUtils.addTablesWithRandomSeatsToRestaurant(restaurantWithRandomTables, 2);
+
+        int maxSeatsNumber = restaurantWithRandomTables.getMaxSeatsNumber();
+        int seat1 = restaurantWithRandomTables.getTables().get(0).getSeatsNumber();
+        int seat2 = restaurantWithRandomTables.getTables().get(1).getSeatsNumber();
+        int expectedSeats = Math.max(seat1, seat2);
+
+        assertThat(maxSeatsNumber).isEqualTo(expectedSeats);
     }
 }

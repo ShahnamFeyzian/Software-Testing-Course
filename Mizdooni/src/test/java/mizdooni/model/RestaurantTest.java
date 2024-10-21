@@ -3,11 +3,10 @@ package mizdooni.model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 public class RestaurantTest {
     private Restaurant restaurant;
@@ -103,5 +102,17 @@ public class RestaurantTest {
         assertThat(avgRating.service).isEqualTo(expectedService);
         assertThat(avgRating.ambiance).isEqualTo(expectedAmbiance);
         assertThat(avgRating.overall).isEqualTo(expectedOverall);
+    }
+
+    @Test
+    public void getStarCount_SpyRestaurantAndSpyRating_GetAverageRatingAndRatingsGetStarCountBeCalled() {
+        Restaurant spyRestaurant = spy(ModelTestUtils.getDefaultRestaurant());
+        Rating spyRating = spy(Rating.class);
+        when(spyRestaurant.getAverageRating()).thenReturn(spyRating);
+
+        spyRestaurant.getStarCount();
+
+        verify(spyRestaurant).getAverageRating();
+        verify(spyRestaurant).getStarCount();
     }
 }

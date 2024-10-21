@@ -69,10 +69,22 @@ public class ModelTestUtils {
         return new Review(user, getDefaultRating(), DEFAULT_COMMENT, DEFAULT_LOCAL_DATE_TIME);
     }
 
+    public static Review getReviewWithRandomRatingForUser(User user) {
+        return new Review(user, getRandomRating(), DEFAULT_COMMENT, DEFAULT_LOCAL_DATE_TIME);
+    }
+
     public static void addReviewsWithDefaultRatingWithUniqueUserToRestaurant(Restaurant restaurant, int num) {
         for (int i = 0; i < num; i++) {
             User user = getDefaultClientUserWithName("client" + i);
             Review review = getReviewWithDefaultRatingForUser(user);
+            restaurant.addReview(review);
+        }
+    }
+
+    public static void addReviewsWithRandomRatingWithUniqueUserToRestaurant(Restaurant restaurant, int num) {
+        for (int i = 0; i < num; i++) {
+            User user = getDefaultClientUserWithName("client" + i);
+            Review review = getReviewWithRandomRatingForUser(user);
             restaurant.addReview(review);
         }
     }

@@ -3,6 +3,7 @@ package mizdooni.model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,5 +73,35 @@ public class RestaurantTest {
 
         assertThat(restaurantReviews.get(previousReviewIndex).getUser()).isNotEqualTo(repeatedUser);
         assertThat(newReview).isEqualTo(repeatedUserReview);
+    }
+
+    @Test
+    public void getAverageRating_RestaurantWithNoReview_AllScoreAreZero() {
+        Restaurant tempRestaurant = ModelTestUtils.getDefaultRestaurant();
+
+        Rating avgRating = tempRestaurant.getAverageRating();
+
+        assertThat(avgRating.food).isZero();
+        assertThat(avgRating.service).isZero();
+        assertThat(avgRating.ambiance).isZero();
+        assertThat(avgRating.overall).isZero();
+    }
+
+    @Test
+    public void getAverageRating_RestaurantWithThreeRandomReviews_ResultIsAverageOfThem() {
+        Restaurant randomRatedRestaurant = ModelTestUtils.getDefaultRestaurant();
+        ModelTestUtils.addReviewsWithRandomRatingWithUniqueUserToRestaurant(randomRatedRestaurant, 3);
+        List<Review> reviews = randomRatedRestaurant.getReviews();
+
+        Rating avgRating = randomRatedRestaurant.getAverageRating();
+        double expectedFood = (reviews.get(0).getRating().food + reviews.get(1).getRating().food + reviews.get(2).getRating().food) / 3;
+        double expectedService = (reviews.get(0).getRating().service + reviews.get(1).getRating().service + reviews.get(2).getRating().service) / 3;
+        double expectedAmbiance = (reviews.get(0).getRating().ambiance + reviews.get(1).getRating().ambiance + reviews.get(2).getRating().ambiance) / 3;
+        double expectedOverall = (reviews.get(0).getRating().overall + reviews.get(1).getRating().overall + reviews.get(2).getRating().overall) / 3;
+
+        assertThat(avgRating.food).isEqualTo(expectedFood);
+        assertThat(avgRating.service).isEqualTo(expectedService);
+        assertThat(avgRating.ambiance).isEqualTo(expectedAmbiance);
+        assertThat(avgRating.overall).isEqualTo(expectedOverall);
     }
 }

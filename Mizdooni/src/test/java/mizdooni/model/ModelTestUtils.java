@@ -20,6 +20,7 @@ public class ModelTestUtils {
     public static final int DEFAULT_SEATS_NUMBER = 4;
     public static final String DEFAULT_COMMENT = "comment";
     public static final double DEFAULT_RATING_NUMBER = 4.5;
+    public static final boolean DEFAULT_CANCELLED_RESERVATION = false;
 
 
     public static Rating getDefaultRating() {
@@ -106,6 +107,12 @@ public class ModelTestUtils {
                 DEFAULT_NAME, getDefaultManagerUser(),
                 DEFAULT_TYPE, DEFAULT_LOCAL_TIME, DEFAULT_LOCAL_TIME,
                 DEFAULT_DESCRIPTION,getDefaultAddress(), DEFAULT_IMAGE_LINK
+        );
+    }
+
+    public static Reservation getDefaultReservation(User user , Restaurant restaurant , Table table){
+        return new Reservation(
+                user , restaurant , table , DEFAULT_LOCAL_DATE_TIME
         );
     }
 }

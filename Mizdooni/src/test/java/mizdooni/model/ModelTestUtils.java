@@ -12,7 +12,9 @@ public class ModelTestUtils {
     public static final String DEFAULT_EMAIL = "email";
     public static final String DEFAULT_TYPE = "type";
     public static final LocalTime DEFAULT_LOCAL_TIME = LocalTime.of(12, 0, 0);
-    public static final LocalDateTime DEFAULT_LOCAL_DATE_TIME = LocalDateTime.of(2000, 1, 1, 12, 0, 0);
+    public static final LocalDateTime DEFAULT_LOCAL_DATE_TIME = LocalDateTime.of(
+            2000, 1, 1, 12, 0, 0
+    );
     public static final String DEFAULT_DESCRIPTION = "description";
     public static final String DEFAULT_IMAGE_LINK = "image_link";
     public static final int DEFAULT_SEATS_NUMBER = 4;

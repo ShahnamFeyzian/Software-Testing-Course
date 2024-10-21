@@ -27,6 +27,10 @@ public class ModelTestUtils {
         return new Rating(DEFAULT_RATING_NUMBER, DEFAULT_RATING_NUMBER, DEFAULT_RATING_NUMBER, DEFAULT_RATING_NUMBER);
     }
 
+    public static Rating getRatingWithOverallRate(double overall) {
+        return new Rating(DEFAULT_RATING_NUMBER, DEFAULT_RATING_NUMBER, DEFAULT_RATING_NUMBER, overall);
+    }
+
     public static Rating getRandomRating() {
         double food = Math.random()*100;
         double service = Math.random()*100;

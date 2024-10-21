@@ -2,9 +2,6 @@ package mizdooni.model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.List;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -45,12 +42,18 @@ public class UserTest {
 
 
     @Test
-    public void testCheckUnreservedTable(){
+    public void testCheckUnreservedTableBecauseDifferentRestaurant(){
         Restaurant restaurant2;
         restaurant2 = ModelTestUtils.getDefaultRestaurant();
         ModelTestUtils.addTablesWithDefaultSeatsToRestaurant(restaurant2, 3);
 
         assertFalse(clientUser.checkReserved(restaurant2));
+    }
+
+    @Test
+    public void testCheckUnreservedTableBecauseCancelledReservation(){
+        reservation1.cancel();
+        assertFalse(clientUser.checkReserved(restaurant1));
     }
 
     @Test

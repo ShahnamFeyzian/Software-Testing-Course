@@ -1,35 +1,46 @@
 package mizdooni.model;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static mizdooni.model.ModelTestUtils.getRatingWithOverallRate;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 class RatingTest {
 
     @Test
-    void testGetStarCount_ExactlyFive() {
-        Rating rating = ModelTestUtils.getRatingWithOverallRate(5);
+    void getStarCount_RatingWithOverallFive_ReturnsFive() {
+        Rating rating = getRatingWithOverallRate(5);
+
         int starCount = rating.getStarCount();
-        assertEquals(5, starCount);
+
+        assertThat(starCount).isEqualTo(5);
     }
 
     @Test
-    void testGetStarCount_GreaterThanFive() {
-        Rating rating = ModelTestUtils.getRatingWithOverallRate(5.9);
+    void getStarCount_RatingWithOverallGreaterThanFive_ReturnsFive() {
+        Rating rating = getRatingWithOverallRate(5.9);
+
         int starCount = rating.getStarCount();
-        assertEquals(5, starCount);
+
+        assertThat(starCount).isEqualTo(5);
     }
 
     @Test
-    void testGetStarCount_RoundsDown() {
-        Rating rating = ModelTestUtils.getRatingWithOverallRate(2.4);
+    void getStarCount_OverallRatingDecimalPartIsLessThanHalf_RoundsDown() {
+        Rating rating = getRatingWithOverallRate(2.4);
+
         int starCount = rating.getStarCount();
-        assertEquals(2, starCount);
+
+        assertThat(starCount).isEqualTo(2);
     }
 
     @Test
-    void testGetStarCount_RoundsUp() {
-        Rating rating = ModelTestUtils.getRatingWithOverallRate(3.8);
+    void getStarCount_OverallRatingDecimalPartIsGreaterThanHalf_RoundsUp() {
+        Rating rating = getRatingWithOverallRate(3.8);
+
         int starCount = rating.getStarCount();
-        assertEquals(4, starCount);
+
+        assertThat(starCount).isEqualTo(4);
     }
 }

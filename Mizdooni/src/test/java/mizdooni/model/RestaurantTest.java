@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static mizdooni.model.ModelTestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -13,9 +14,9 @@ public class RestaurantTest {
 
     @BeforeEach
     public void setup() {
-        restaurant = ModelTestUtils.getDefaultRestaurant();
-        ModelTestUtils.addTablesWithDefaultSeatsToRestaurant(restaurant, 3);
-        ModelTestUtils.addReviewsWithDefaultRatingWithUniqueUserToRestaurant(restaurant, 3);
+        restaurant = getDefaultRestaurant();
+        addTablesWithDefaultSeatsToRestaurant(restaurant, 3);
+        addReviewsWithDefaultRatingWithUniqueUserToRestaurant(restaurant, 3);
     }
 
     @Test
@@ -37,7 +38,7 @@ public class RestaurantTest {
 
     @Test
     public void addTable_AddNewTable_ItsTableNumberAndRestaurantTableListSizeIncreasesByOne() {
-        restaurant.addTable(ModelTestUtils.getTableWithDefaultSeatsForRestaurant(restaurant));
+        restaurant.addTable(getTableWithDefaultSeatsForRestaurant(restaurant));
 
         List<Table> restaurantTables = restaurant.getTables();
         Table newTable = restaurantTables.getLast();
@@ -49,8 +50,8 @@ public class RestaurantTest {
 
     @Test
     public void addReview_ReviewWithNewUser_AddsReviewToRestaurantReviewList() {
-        User newUser = ModelTestUtils.getDefaultClientUser();
-        Review newReview = ModelTestUtils.getReviewWithDefaultRatingForUser(newUser);
+        User newUser = getDefaultClientUser();
+        Review newReview = getReviewWithDefaultRatingForUser(newUser);
 
         restaurant.addReview(newReview);
         List<Review> restaurantReviews = restaurant.getReviews();
@@ -63,7 +64,7 @@ public class RestaurantTest {
     @Test
     public void addReview_ReviewWithUserThatAlreadyHasReview_DeletesPreviousReview() {
         User repeatedUser = restaurant.getReviews().getFirst().getUser();
-        Review repeatedUserReview = ModelTestUtils.getReviewWithDefaultRatingForUser(repeatedUser);
+        Review repeatedUserReview = getReviewWithDefaultRatingForUser(repeatedUser);
 
         restaurant.addReview(repeatedUserReview);
         List<Review> restaurantReviews = restaurant.getReviews();
@@ -76,7 +77,7 @@ public class RestaurantTest {
 
     @Test
     public void getAverageRating_RestaurantWithNoReview_AllScoreAreZero() {
-        Restaurant tempRestaurant = ModelTestUtils.getDefaultRestaurant();
+        Restaurant tempRestaurant = getDefaultRestaurant();
 
         Rating avgRating = tempRestaurant.getAverageRating();
 
@@ -88,8 +89,8 @@ public class RestaurantTest {
 
     @Test
     public void getAverageRating_RestaurantWithThreeRandomReviews_ResultIsAverageOfThem() {
-        Restaurant randomRatedRestaurant = ModelTestUtils.getDefaultRestaurant();
-        ModelTestUtils.addReviewsWithRandomRatingWithUniqueUserToRestaurant(randomRatedRestaurant, 3);
+        Restaurant randomRatedRestaurant = getDefaultRestaurant();
+        addReviewsWithRandomRatingWithUniqueUserToRestaurant(randomRatedRestaurant, 3);
         List<Review> reviews = randomRatedRestaurant.getReviews();
 
         Rating avgRating = randomRatedRestaurant.getAverageRating();
@@ -106,7 +107,7 @@ public class RestaurantTest {
 
     @Test
     public void getStarCount_SpyRestaurantAndSpyRating_GetAverageRatingAndRatingsGetStarCountBeCalled() {
-        Restaurant spyRestaurant = spy(ModelTestUtils.getDefaultRestaurant());
+        Restaurant spyRestaurant = spy(getDefaultRestaurant());
         Rating spyRating = spy(Rating.class);
         when(spyRestaurant.getAverageRating()).thenReturn(spyRating);
 
@@ -118,7 +119,7 @@ public class RestaurantTest {
 
     @Test
     public void getMaxSeatsNumber_RestaurantWithNoTable_ReturnsZero() {
-        Restaurant tempRestaurant = ModelTestUtils.getDefaultRestaurant();
+        Restaurant tempRestaurant = getDefaultRestaurant();
 
         int maxSeatsNumber = tempRestaurant.getMaxSeatsNumber();
 
@@ -127,8 +128,8 @@ public class RestaurantTest {
 
     @Test
     public void getMaxSeatsNumber_RestaurantWithTwoRandomTables_ReturnsBiggerNumber() {
-        Restaurant restaurantWithRandomTables = ModelTestUtils.getDefaultRestaurant();
-        ModelTestUtils.addTablesWithRandomSeatsToRestaurant(restaurantWithRandomTables, 2);
+        Restaurant restaurantWithRandomTables = getDefaultRestaurant();
+        addTablesWithRandomSeatsToRestaurant(restaurantWithRandomTables, 2);
 
         int maxSeatsNumber = restaurantWithRandomTables.getMaxSeatsNumber();
         int seat1 = restaurantWithRandomTables.getTables().get(0).getSeatsNumber();

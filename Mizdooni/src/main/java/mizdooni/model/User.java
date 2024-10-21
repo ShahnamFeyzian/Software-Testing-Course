@@ -39,7 +39,7 @@ public class User {
 
     public boolean checkReserved(Restaurant restaurant) {
         return reservations.stream().anyMatch(r -> !r.isCancelled() &&
-                r.getDateTime().isBefore(LocalDateTime.now()) &&
+                r.getDateTime().isAfter(LocalDateTime.now()) &&
                 r.getRestaurant().equals(restaurant));
     }
 
@@ -52,12 +52,12 @@ public class User {
         return null;
     }
 
-    public List<Reservation> getReservations() {
-        return reservations;
-    }
-
     public boolean checkPassword(String pass) {
         return password.equals(pass);
+    }
+
+    public List<Reservation> getReservations() {
+        return reservations;
     }
 
     public int getId() {

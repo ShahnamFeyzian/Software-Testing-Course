@@ -19,10 +19,13 @@ import static mizdooni.controllers.ControllerUtils.PARAMS_MISSING;
 
 @RestController
 class ReviewController {
-    @Autowired
-    private RestaurantService restaurantService;
-    @Autowired
-    private ReviewService reviewService;
+    private final RestaurantService restaurantService;
+    private final ReviewService reviewService;
+
+    public ReviewController(RestaurantService restaurantService, ReviewService reviewService) {
+        this.restaurantService = restaurantService;
+        this.reviewService = reviewService;
+    }
 
     @GetMapping("/reviews/{restaurantId}")
     public Response getReviews(@PathVariable int restaurantId, @RequestParam int page) {

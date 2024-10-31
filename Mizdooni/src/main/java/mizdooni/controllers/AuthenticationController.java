@@ -17,8 +17,11 @@ import static mizdooni.controllers.ControllerUtils.PARAMS_MISSING;
 
 @RestController
 public class AuthenticationController {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public AuthenticationController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/user")
     public Response user() {

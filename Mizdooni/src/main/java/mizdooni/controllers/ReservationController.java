@@ -21,10 +21,13 @@ import static mizdooni.controllers.ControllerUtils.*;
 @RestController
 @LoginRequired
 public class ReservationController {
-    @Autowired
-    private RestaurantService restaurantService;
-    @Autowired
-    private ReservationService reserveService;
+    private final RestaurantService restaurantService;
+    private final ReservationService reserveService;
+
+    public ReservationController(RestaurantService restaurantService, ReservationService reserveService) {
+        this.restaurantService = restaurantService;
+        this.reserveService = reserveService;
+    }
 
     @GetMapping("/reserves/{restaurantId}")
     public Response getReservations(@PathVariable int restaurantId,

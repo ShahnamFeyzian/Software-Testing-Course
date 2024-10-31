@@ -34,9 +34,9 @@ public class ReservationController {
                                     @RequestParam int table,
                                     @RequestParam(required = false) String date) {
         ControllerUtils.checkRestaurant(restaurantId, restaurantService);
-        LocalDate localDate = null;
+        LocalDate localDate;
         try {
-            localDate = LocalDate.parse(date, DATE_FORMATTER);
+            localDate = (date == null || date.isEmpty()) ? null : LocalDate.parse(date, DATE_FORMATTER);
         } catch (Exception ex) {
             throw new ResponseException(HttpStatus.BAD_REQUEST, PARAMS_BAD_TYPE);
         }

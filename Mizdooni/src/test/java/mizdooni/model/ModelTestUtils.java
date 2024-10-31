@@ -10,6 +10,7 @@ public class ModelTestUtils {
     public static final String DEFAULT_CITY = "city";
     public static final String DEFAULT_STREET = "street";
     public static final String DEFAULT_NAME = "name";
+    public static final String INVALID_NAME = "@#$%^&*";
     public static final String DEFAULT_PASS = "password";
     public static final String DEFAULT_EMAIL = "email";
     public static final String DEFAULT_TYPE = "type";

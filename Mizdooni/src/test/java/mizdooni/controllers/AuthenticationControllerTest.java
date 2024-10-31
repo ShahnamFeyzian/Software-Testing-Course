@@ -217,4 +217,34 @@ public class AuthenticationControllerTest {
                 .extracting("status")
                 .isEqualTo(HttpStatus.UNAUTHORIZED);
     }
+
+    @Test
+    public void validateUsername_InvalidFormat_ThrowsBadRequest() {
+        assertThatThrownBy(() -> controller.validateUsername(INVALID_NAME))
+                .isInstanceOf(ResponseException.class)
+                .hasMessage("invalid username format")
+                .extracting("status")
+                .isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void validateUsername_UsernameAlreadyExists_ThrowsConflict() {
+        when(userService.usernameExists(DEFAULT_NAME)).thenReturn(true);
+
+        assertThatThrownBy(() -> controller.validateUsername(DEFAULT_NAME))
+                .isInstanceOf(ResponseException.class)
+                .hasMessage("username already exists")
+                .extracting("status")
+                .isEqualTo(HttpStatus.CONFLICT);
+    }
+
+    @Test
+    public void validateUsername_ValidUsername_ReturnsOkStatus() {
+        when(userService.usernameExists(DEFAULT_NAME)).thenReturn(false);
+
+        Response response = controller.validateUsername(DEFAULT_NAME);
+        HttpStatus actualStatus = response.getStatus();
+
+        assertThat(actualStatus).isEqualTo(HttpStatus.OK);
+    }
 }

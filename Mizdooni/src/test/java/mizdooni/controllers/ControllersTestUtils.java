@@ -1,8 +1,12 @@
 package mizdooni.controllers;
 
+import mizdooni.model.Address;
 import mizdooni.model.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 import static mizdooni.model.ModelTestUtils.*;
 
@@ -18,7 +22,29 @@ public class ControllersTestUtils {
         params.put(USER_PASS_KEY, DEFAULT_PASS);
         return params;
     }
-    public static HashMap<String, Object> createSignupBadParams() {
+    public static List<String> getSignupParamsKeyList() {
+        List<String> params = new ArrayList<>();
+        params.add(USER_NAME_KEY);
+        params.add(USER_PASS_KEY);
+        params.add(EMAIL_KEY);
+        params.add(ADDRESS_KEY);
+        params.add(ROLE_KEY);
+        return params;
+    }
+    public static HashMap<String, Object> createSignupParamsBasedOn(HashMap<String, Object> baseParams) {
+        List<String> allKeys = getSignupParamsKeyList();
+        HashMap<String, Object> defaultParams = createSignupParams();
+        HashMap<String, Object> params = new HashMap<>();
+        for (String key : allKeys) {
+            if (baseParams.containsKey(key)) {
+                params.put(key, baseParams.get(key));
+            } else {
+                params.put(key, defaultParams.get(key));
+            }
+        }
+        return params;
+    }
+    public static HashMap<String, Object> createSignupNullParams() {
         HashMap<String, Object> params = new HashMap<>();
         params.put(USER_NAME_KEY, null);
         params.put(USER_PASS_KEY, null);
@@ -27,14 +53,29 @@ public class ControllersTestUtils {
         params.put(ROLE_KEY, null);
         return params;
     }
-
+    public static HashMap<String, Object> createSignupBlankParams() {
+        HashMap<String, Object> params = new HashMap<>();
+        params.put(USER_NAME_KEY, "");
+        params.put(USER_PASS_KEY, "");
+        params.put(EMAIL_KEY, "");
+        params.put(ADDRESS_KEY, getDefaultAddress());
+        params.put(ROLE_KEY, User.Role.client);
+        return params;
+    }
     public static HashMap<String, Object> createSignupParams() {
         HashMap<String, Object> params = new HashMap<>();
         params.put(USER_NAME_KEY, DEFAULT_NAME);
         params.put(USER_PASS_KEY, DEFAULT_PASS);
         params.put(EMAIL_KEY, DEFAULT_EMAIL);
-        params.put(ADDRESS_KEY, getDefaultAddress());
-        params.put(ROLE_KEY, User.Role.client);
+        params.put(ADDRESS_KEY, createAddressHashMap(getDefaultAddress()));
+        params.put(ROLE_KEY, User.Role.client.name());
         return params;
+    }
+    public static HashMap<String, String> createAddressHashMap(Address address) {
+        HashMap<String, String> addressMap = new HashMap<>();
+        addressMap.put("country", address.getCountry());
+        addressMap.put("city", address.getCity());
+        addressMap.put("street", address.getStreet());
+        return addressMap;
     }
 }

@@ -1,5 +1,7 @@
 package mizdooni.model;
 
+import java.util.Objects;
+
 public class Address {
     private String country;
     private String city;
@@ -21,5 +23,22 @@ public class Address {
 
     public String getStreet() {
         return street;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Address)) {
+            return false;
+        }
+        Address other = (Address) obj;
+        return country.equals(other.country) && city.equals(other.city) && street.equals(other.street);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(country, city, street);
     }
 }

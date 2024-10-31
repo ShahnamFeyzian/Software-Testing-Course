@@ -58,6 +58,7 @@ public class AuthenticationController {
         User.Role role;
 
         try {
+            //FIXME: This part of code has low quality for creating object manually and not using auto mapper and DTO
             username = (String) params.get("username");
             password = (String) params.get("password");
             email = (String) params.get("email");

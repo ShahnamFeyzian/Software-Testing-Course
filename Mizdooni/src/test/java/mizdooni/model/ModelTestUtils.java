@@ -12,7 +12,8 @@ public class ModelTestUtils {
     public static final String DEFAULT_NAME = "name";
     public static final String INVALID_NAME = "@#$%^&*";
     public static final String DEFAULT_PASS = "password";
-    public static final String DEFAULT_EMAIL = "email";
+    public static final String DEFAULT_EMAIL = "email@gmail.com";
+    public static final String INVALID_EMAIL = "invalid email";
     public static final String DEFAULT_TYPE = "type";
     public static final LocalTime DEFAULT_LOCAL_TIME = LocalTime.of(12, 0, 0);
     public static final LocalDateTime DEFAULT_LOCAL_DATE_TIME = LocalDateTime.of(

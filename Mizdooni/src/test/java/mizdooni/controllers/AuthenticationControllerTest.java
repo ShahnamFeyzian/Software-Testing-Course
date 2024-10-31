@@ -247,4 +247,34 @@ public class AuthenticationControllerTest {
 
         assertThat(actualStatus).isEqualTo(HttpStatus.OK);
     }
+
+    @Test
+    public void validateEmail_InvalidFormat_ThrowsBadRequest() {
+        assertThatThrownBy(() -> controller.validateEmail(INVALID_EMAIL))
+                .isInstanceOf(ResponseException.class)
+                .hasMessage("invalid email format")
+                .extracting("status")
+                .isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void validateEmail_EmailAlreadyExists_ThrowsConflict() {
+        when(userService.emailExists(DEFAULT_EMAIL)).thenReturn(true);
+
+        assertThatThrownBy(() -> controller.validateEmail(DEFAULT_EMAIL))
+                .isInstanceOf(ResponseException.class)
+                .hasMessage("email already registered")
+                .extracting("status")
+                .isEqualTo(HttpStatus.CONFLICT);
+    }
+
+    @Test
+    public void validateEmail_ValidEmail_ReturnsOkStatus() {
+        when(userService.emailExists(DEFAULT_EMAIL)).thenReturn(false);
+
+        Response response = controller.validateEmail(DEFAULT_EMAIL);
+        HttpStatus actualStatus = response.getStatus();
+
+        assertThat(actualStatus).isEqualTo(HttpStatus.OK);
+    }
 }

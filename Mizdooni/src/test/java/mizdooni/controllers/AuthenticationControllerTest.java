@@ -196,4 +196,25 @@ public class AuthenticationControllerTest {
                 .extracting("status")
                 .isEqualTo(HttpStatus.BAD_REQUEST);
     }
+
+    @Test
+    public void logout_ThereIsLoggedInUser_ReturnsOkStatus() {
+        when(userService.logout()).thenReturn(true);
+
+        Response response = controller.logout();
+        HttpStatus actualStatus = response.getStatus();
+
+        assertThat(actualStatus).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void logout_ThereIsNoLoggedInUser_ThrowsUnauthorized() {
+        when(userService.logout()).thenReturn(false);
+
+        assertThatThrownBy(() -> controller.logout())
+                .isInstanceOf(ResponseException.class)
+                .hasMessage("no user logged in")
+                .extracting("status")
+                .isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
 }

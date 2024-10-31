@@ -1,38 +1,50 @@
 package mizdooni.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import mizdooni.model.User;
+import mizdooni.response.Response;
+import mizdooni.response.ResponseException;
 import mizdooni.service.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.http.HttpStatus;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@ExtendWith(MockitoExtension.class)
-@WebMvcTest(AuthenticationController.class)
+
 public class AuthenticationControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
     private UserService userService;
+    private AuthenticationController controller;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    @BeforeEach
+    public void setup() {
+        userService = mock(UserService.class);
+        controller = new AuthenticationController(userService);
+    }
 
     @Test
-    public void getCurrentUser_NoOneLoggedIn_UnAuthorized() throws Exception {
+    public void user_NoOneLoggedIn_ThrowsUnAuthorized() {
         when(userService.getCurrentUser()).thenReturn(null);
 
-        MockHttpServletResponse response = mockMvc.perform(get("/user")).andReturn().getResponse();
+        assertThatThrownBy(() -> controller.user())
+                .isInstanceOf(ResponseException.class)
+                .hasMessage("no user logged in")
+                .extracting("status")
+                .isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
 
-        User result = mapper.readValue(response.getContentAsString(), User.class);
+    @Test
+    public void user_HasLoggedInUser_ReturnsOkResponseWithLoggedInUser() {
+        User dummyUser = mock(User.class);
+        HttpStatus expectedStatus = HttpStatus.OK;
+        when(userService.getCurrentUser()).thenReturn(dummyUser);
+
+        Response response = controller.user();
+        Object actualUser = response.getData();
+        HttpStatus actualStatus = response.getStatus();
+
+        assertThat(actualUser).isEqualTo(dummyUser);
+        assertThat(actualStatus).isEqualTo(expectedStatus);
     }
 }

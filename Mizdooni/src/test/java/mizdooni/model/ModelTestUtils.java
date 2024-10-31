@@ -1,5 +1,6 @@
 package mizdooni.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -15,6 +16,7 @@ public class ModelTestUtils {
     public static final String DEFAULT_EMAIL = "email@gmail.com";
     public static final String INVALID_EMAIL = "invalid email";
     public static final String DEFAULT_TYPE = "type";
+    public static final LocalDate DEFAULT_LOCAL_DATE = LocalDate.of(2000, 1, 1);
     public static final LocalTime DEFAULT_LOCAL_TIME = LocalTime.of(12, 0, 0);
     public static final LocalDateTime DEFAULT_LOCAL_DATE_TIME = LocalDateTime.of(
             2000, 1, 1, 12, 0, 0

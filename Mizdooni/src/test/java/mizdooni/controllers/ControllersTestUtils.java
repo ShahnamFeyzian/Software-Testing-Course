@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import static mizdooni.controllers.ControllerUtils.DATE_FORMATTER;
 import static mizdooni.model.ModelTestUtils.*;
 
 public class ControllersTestUtils {
@@ -16,6 +17,9 @@ public class ControllersTestUtils {
     public static final String EMAIL_KEY = "email";
     public static final String ADDRESS_KEY = "address";
     public static final String ROLE_KEY = "role";
+    public static final int DEFAULT_RESTAURANT_ID = 123;
+    public static final int DEFAULT_TABLE_ID = 123;
+    public static final String DEFAULT_DATE_FORMAT = DEFAULT_LOCAL_DATE.format(DATE_FORMATTER);
     public static HashMap<String, String> createLoginParams() {
         HashMap<String, String> params = new HashMap<>();
         params.put(USER_NAME_KEY, DEFAULT_NAME);

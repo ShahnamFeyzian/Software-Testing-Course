@@ -25,6 +25,7 @@ public class ControllersTestUtils {
     public static final int DEFAULT_RESTAURANT_ID = 123;
     public static final int DEFAULT_TABLE_ID = 123;
     public static final int DEFAULT_CUSTOMER_ID = 123;
+    public static final int DEFAULT_RESERVATION_NUM = 2;
     public static final int DEFAULT_PEOPLE_NUMBER = 4;
     public static HashMap<String, String> createLoginParams() {
         HashMap<String, String> params = new HashMap<>();

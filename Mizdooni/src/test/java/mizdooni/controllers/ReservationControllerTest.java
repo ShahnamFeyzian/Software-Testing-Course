@@ -263,4 +263,25 @@ public class ReservationControllerTest {
         assertThat(actualReservation).isEqualTo(dummyReservation);
         assertThat(actualStatus).isEqualTo(HttpStatus.OK);
     }
+
+    @Test
+    public void cancelReservation_CancelReservationFailed_ThrowsBadRequest()
+            throws ReservationCannotBeCancelled, UserNotFound, ReservationNotFound {
+        doThrow(new UserNotFound()).when(reservationService).cancelReservation(DEFAULT_RESERVATION_NUM);
+
+        assertThatThrownBy(() -> controller.cancelReservation(DEFAULT_RESERVATION_NUM))
+                .isInstanceOf(ResponseException.class)
+                .extracting("status")
+                .isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+    @Test
+    public void cancelReservation_SuccessfulCancelReservation_ReturnsOkStatus()
+            throws ReservationCannotBeCancelled, UserNotFound, ReservationNotFound {
+        doNothing().when(reservationService).cancelReservation(DEFAULT_RESERVATION_NUM);
+
+        Response response = controller.cancelReservation(DEFAULT_RESERVATION_NUM);
+        HttpStatus actualStatus = response.getStatus();
+
+        assertThat(actualStatus).isEqualTo(HttpStatus.OK);
+    }
 }

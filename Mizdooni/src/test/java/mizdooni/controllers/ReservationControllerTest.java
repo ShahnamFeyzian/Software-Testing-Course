@@ -38,8 +38,8 @@ public class ReservationControllerTest {
     public void setup() {
         dummyRestaurant = mock(Restaurant.class);
         restaurantService = mock(RestaurantService.class);
-        reservationService = mock(ReservationService.class);
         when(restaurantService.getRestaurant(DEFAULT_RESTAURANT_ID)).thenReturn(dummyRestaurant);
+        reservationService = mock(ReservationService.class);
         controller = new ReservationController(restaurantService, reservationService);
     }
 

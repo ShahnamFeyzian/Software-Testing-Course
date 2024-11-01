@@ -139,7 +139,7 @@ public class ReservationControllerTest {
     public void getAvailableTimes_RestaurantIdDoesNotExist_ThrowsNotFound() {
         when(restaurantService.getRestaurant(DEFAULT_RESTAURANT_ID)).thenReturn(null);
 
-        assertThatThrownBy(() -> controller.getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUMBER, DEFAULT_DATE_FORMAT))
+        assertThatThrownBy(() -> controller.getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUM, DEFAULT_DATE_FORMAT))
                 .isInstanceOf(ResponseException.class)
                 .hasMessage("restaurant not found")
                 .extracting("status")
@@ -148,7 +148,7 @@ public class ReservationControllerTest {
 
     @Test
     public void getAvailableTimes_InvalidLocalDateFormat_ThrowsBadRequest() {
-        assertThatThrownBy(() -> controller.getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUMBER, "!@#$%^"))
+        assertThatThrownBy(() -> controller.getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUM, "!@#$%^"))
                 .isInstanceOf(ResponseException.class)
                 .hasMessage(PARAMS_BAD_TYPE)
                 .extracting("status")
@@ -159,9 +159,9 @@ public class ReservationControllerTest {
     public void getAvailableTimes_GetAvailableTimesFailed_ThrowsBadRequest()
             throws DateTimeInThePast, RestaurantNotFound, BadPeopleNumber {
         doThrow(new DateTimeInThePast()).when(reservationService).
-                getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUMBER, DEFAULT_LOCAL_DATE);
+                getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUM, DEFAULT_LOCAL_DATE);
 
-        assertThatThrownBy(() -> controller.getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUMBER, DEFAULT_DATE_FORMAT))
+        assertThatThrownBy(() -> controller.getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUM, DEFAULT_DATE_FORMAT))
                 .isInstanceOf(ResponseException.class)
                 .extracting("status")
                 .isEqualTo(HttpStatus.BAD_REQUEST);
@@ -173,10 +173,10 @@ public class ReservationControllerTest {
         List<LocalTime> expectedResult = new ArrayList<>();
         LocalTime dummyTime = mock(LocalTime.class);
         expectedResult.add(dummyTime);
-        when(reservationService.getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUMBER, DEFAULT_LOCAL_DATE))
+        when(reservationService.getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUM, DEFAULT_LOCAL_DATE))
                 .thenReturn(expectedResult);
 
-        Response response = controller.getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUMBER, DEFAULT_DATE_FORMAT);
+        Response response = controller.getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUM, DEFAULT_DATE_FORMAT);
         List<LocalTime> actualData = (List<LocalTime>) response.getData();
         HttpStatus actualStatus = response.getStatus();
 
@@ -240,7 +240,7 @@ public class ReservationControllerTest {
             throws UserNotFound, DateTimeInThePast, TableNotFound, ReservationNotInOpenTimes,
             ManagerReservationNotAllowed, RestaurantNotFound, InvalidWorkingTime {
         doThrow(new DateTimeInThePast()).when(reservationService).
-                reserveTable(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUMBER, DEFAULT_LOCAL_DATE_TIME);
+                reserveTable(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUM, DEFAULT_LOCAL_DATE_TIME);
 
         assertThatThrownBy(() -> controller.addReservation(DEFAULT_RESTAURANT_ID, createAddReservationParams()))
                 .isInstanceOf(ResponseException.class)
@@ -253,7 +253,7 @@ public class ReservationControllerTest {
             throws UserNotFound, DateTimeInThePast, TableNotFound, ReservationNotInOpenTimes,
             ManagerReservationNotAllowed, RestaurantNotFound, InvalidWorkingTime {
         Reservation dummyReservation = mock(Reservation.class);
-        when(reservationService.reserveTable(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUMBER, DEFAULT_LOCAL_DATE_TIME))
+        when(reservationService.reserveTable(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUM, DEFAULT_LOCAL_DATE_TIME))
                 .thenReturn(dummyReservation);
 
         Response response = controller.addReservation(DEFAULT_RESTAURANT_ID, createAddReservationParams());

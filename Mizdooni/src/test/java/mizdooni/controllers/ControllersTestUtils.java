@@ -6,7 +6,6 @@ import mizdooni.model.User;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import static mizdooni.controllers.ControllerUtils.DATETIME_FORMATTER;
 import static mizdooni.controllers.ControllerUtils.DATE_FORMATTER;
@@ -26,7 +25,8 @@ public class ControllersTestUtils {
     public static final int DEFAULT_TABLE_ID = 123;
     public static final int DEFAULT_CUSTOMER_ID = 123;
     public static final int DEFAULT_RESERVATION_NUM = 2;
-    public static final int DEFAULT_PEOPLE_NUMBER = 4;
+    public static final int DEFAULT_PEOPLE_NUM = 4;
+    public static final int DEFAULT_PAGE_NUM = 1;
     public static HashMap<String, String> createLoginParams() {
         HashMap<String, String> params = new HashMap<>();
         params.put(USER_NAME_KEY, DEFAULT_NAME);
@@ -90,7 +90,7 @@ public class ControllersTestUtils {
     }
     public static HashMap<String, String> createAddReservationParams() {
         HashMap<String, String> params = new HashMap<>();
-        params.put(PEOPLE_NUMBER_KEY, Integer.toString(DEFAULT_PEOPLE_NUMBER));
+        params.put(PEOPLE_NUMBER_KEY, Integer.toString(DEFAULT_PEOPLE_NUM));
         params.put(DATE_TIME_KEY, DEFAULT_DATE_TIME_FORMAT);
         return params;
     }

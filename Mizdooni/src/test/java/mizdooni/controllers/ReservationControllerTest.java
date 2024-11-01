@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static mizdooni.controllers.ControllerUtils.PARAMS_BAD_TYPE;
 import static mizdooni.controllers.ControllersTestUtils.*;
@@ -71,28 +72,36 @@ public class ReservationControllerTest {
     }
 
     @Test
-    public void getReservations_SuccessGettingReservations_ReturnsOkStatusAndGetReservationsCalled()
+    public void getReservations_SuccessGettingReservations_ReturnsOkStatusWithReservations()
             throws UserNotManager, TableNotFound, InvalidManagerRestaurant, RestaurantNotFound {
+        List<Reservation> expectedResult = new ArrayList<>();
+        Reservation dummyReservation = mock(Reservation.class);
+        expectedResult.add(dummyReservation);
         when(reservationService.getReservations(DEFAULT_RESTAURANT_ID, DEFAULT_TABLE_ID, DEFAULT_LOCAL_DATE))
-                .thenReturn(new ArrayList<>());
+                .thenReturn(expectedResult);
 
         Response response = controller.getReservations(DEFAULT_RESTAURANT_ID, DEFAULT_TABLE_ID, DEFAULT_DATE_FORMAT);
+        List<Reservation> actualData = (List<Reservation>) response.getData();
         HttpStatus actualStatus = response.getStatus();
 
         assertThat(actualStatus).isEqualTo(HttpStatus.OK);
-        verify(reservationService).getReservations(DEFAULT_RESTAURANT_ID, DEFAULT_TABLE_ID, DEFAULT_LOCAL_DATE);
+        assertThat(actualData).containsExactly(dummyReservation);
     }
 
     @Test
-    public void getReservations_SuccessGettingReservationsAndLocalDateIsNull_ReturnsOkStatusAndGetReservationsCalled()
+    public void getReservations_SuccessGettingReservationsAndLocalDateIsNull_ReturnsOkStatusWithReservations()
             throws UserNotManager, TableNotFound, InvalidManagerRestaurant, RestaurantNotFound {
+        List<Reservation> expectedResult = new ArrayList<>();
+        Reservation dummyReservation = mock(Reservation.class);
+        expectedResult.add(dummyReservation);
         when(reservationService.getReservations(DEFAULT_RESTAURANT_ID, DEFAULT_TABLE_ID, null))
-                .thenReturn(new ArrayList<>());
+                .thenReturn(expectedResult);
 
         Response response = controller.getReservations(DEFAULT_RESTAURANT_ID, DEFAULT_TABLE_ID, null);
+        List<Reservation> actualData = (List<Reservation>) response.getData();
         HttpStatus actualStatus = response.getStatus();
 
         assertThat(actualStatus).isEqualTo(HttpStatus.OK);
-        verify(reservationService).getReservations(DEFAULT_RESTAURANT_ID, DEFAULT_TABLE_ID, null);
+        assertThat(actualData).containsExactly(dummyReservation);
     }
 }

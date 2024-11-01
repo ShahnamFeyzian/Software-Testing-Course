@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -125,6 +126,55 @@ public class ReservationControllerTest {
         HttpStatus actualStatus = response.getStatus();
 
         assertThat(actualData).containsExactly(dummyReservation);
+        assertThat(actualStatus).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void getAvailableTimes_RestaurantIdDoesNotExist_ThrowsNotFound() {
+        when(restaurantService.getRestaurant(DEFAULT_RESTAURANT_ID)).thenReturn(null);
+
+        assertThatThrownBy(() -> controller.getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUMBER, DEFAULT_DATE_FORMAT))
+                .isInstanceOf(ResponseException.class)
+                .hasMessage("restaurant not found")
+                .extracting("status")
+                .isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void getAvailableTimes_InvalidLocalDateFormat_ThrowsBadRequest() {
+        assertThatThrownBy(() -> controller.getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUMBER, "!@#$%^"))
+                .isInstanceOf(ResponseException.class)
+                .hasMessage(PARAMS_BAD_TYPE)
+                .extracting("status")
+                .isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void getAvailableTimes_GetAvailableTimesFailed_ThrowsBadRequest()
+            throws DateTimeInThePast, RestaurantNotFound, BadPeopleNumber {
+        doThrow(new DateTimeInThePast()).when(reservationService).
+                getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUMBER, DEFAULT_LOCAL_DATE);
+
+        assertThatThrownBy(() -> controller.getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUMBER, DEFAULT_DATE_FORMAT))
+                .isInstanceOf(ResponseException.class)
+                .extracting("status")
+                .isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void getAvailableTimes_SuccessGetAvailableTimes_ReturnsOkStatusWithTimes()
+            throws DateTimeInThePast, RestaurantNotFound, BadPeopleNumber {
+        List<LocalTime> expectedResult = new ArrayList<>();
+        LocalTime dummyTime = mock(LocalTime.class);
+        expectedResult.add(dummyTime);
+        when(reservationService.getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUMBER, DEFAULT_LOCAL_DATE))
+                .thenReturn(expectedResult);
+
+        Response response = controller.getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUMBER, DEFAULT_DATE_FORMAT);
+        List<LocalTime> actualData = (List<LocalTime>) response.getData();
+        HttpStatus actualStatus = response.getStatus();
+
+        assertThat(actualData).containsExactly(dummyTime);
         assertThat(actualStatus).isEqualTo(HttpStatus.OK);
     }
 }

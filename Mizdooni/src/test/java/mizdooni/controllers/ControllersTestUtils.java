@@ -12,6 +12,7 @@ import static mizdooni.controllers.ControllerUtils.DATE_FORMATTER;
 import static mizdooni.model.ModelTestUtils.*;
 
 public class ControllersTestUtils {
+    public static final String DEFAULT_DATE_FORMAT = DEFAULT_LOCAL_DATE.format(DATE_FORMATTER);
     public static final String USER_NAME_KEY = "username";
     public static final String USER_PASS_KEY = "password";
     public static final String EMAIL_KEY = "email";
@@ -19,7 +20,7 @@ public class ControllersTestUtils {
     public static final String ROLE_KEY = "role";
     public static final int DEFAULT_RESTAURANT_ID = 123;
     public static final int DEFAULT_TABLE_ID = 123;
-    public static final String DEFAULT_DATE_FORMAT = DEFAULT_LOCAL_DATE.format(DATE_FORMATTER);
+    public static final int DEFAULT_CUSTOMER_ID = 123;
     public static HashMap<String, String> createLoginParams() {
         HashMap<String, String> params = new HashMap<>();
         params.put(USER_NAME_KEY, DEFAULT_NAME);

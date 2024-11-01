@@ -1,9 +1,6 @@
 package mizdooni.controllers;
 
-import mizdooni.exceptions.InvalidManagerRestaurant;
-import mizdooni.exceptions.RestaurantNotFound;
-import mizdooni.exceptions.TableNotFound;
-import mizdooni.exceptions.UserNotManager;
+import mizdooni.exceptions.*;
 import mizdooni.model.Reservation;
 import mizdooni.model.Restaurant;
 import mizdooni.response.Response;
@@ -103,5 +100,31 @@ public class ReservationControllerTest {
 
         assertThat(actualStatus).isEqualTo(HttpStatus.OK);
         assertThat(actualData).containsExactly(dummyReservation);
+    }
+
+    @Test
+    public void getCustomerReservations_GetCustomerReservationsFailed_ThrowsBadRequest() throws UserNotFound, UserNoAccess {
+        doThrow(new UserNoAccess()).when(reservationService).getCustomerReservations(DEFAULT_CUSTOMER_ID);
+
+        assertThatThrownBy(() -> controller.getCustomerReservations(DEFAULT_CUSTOMER_ID))
+                .isInstanceOf(ResponseException.class)
+                .extracting("status")
+                .isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void getCustomerReservation_SuccessGetCustomerReservation_ReturnsOkStatusWithReservations()
+            throws UserNotFound, UserNoAccess {
+        List<Reservation> expectedResult = new ArrayList<>();
+        Reservation dummyReservation = mock(Reservation.class);
+        expectedResult.add(dummyReservation);
+        when(reservationService.getCustomerReservations(DEFAULT_CUSTOMER_ID)).thenReturn(expectedResult);
+
+        Response response = controller.getCustomerReservations(DEFAULT_CUSTOMER_ID);
+        List<Reservation> actualData = (List<Reservation>) response.getData();
+        HttpStatus actualStatus = response.getStatus();
+
+        assertThat(actualData).containsExactly(dummyReservation);
+        assertThat(actualStatus).isEqualTo(HttpStatus.OK);
     }
 }

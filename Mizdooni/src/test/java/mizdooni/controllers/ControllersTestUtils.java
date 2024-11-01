@@ -8,16 +8,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import static mizdooni.controllers.ControllerUtils.DATETIME_FORMATTER;
 import static mizdooni.controllers.ControllerUtils.DATE_FORMATTER;
 import static mizdooni.model.ModelTestUtils.*;
 
 public class ControllersTestUtils {
     public static final String DEFAULT_DATE_FORMAT = DEFAULT_LOCAL_DATE.format(DATE_FORMATTER);
+    public static final String DEFAULT_DATE_TIME_FORMAT = DEFAULT_LOCAL_DATE_TIME.format(DATETIME_FORMATTER);
     public static final String USER_NAME_KEY = "username";
     public static final String USER_PASS_KEY = "password";
     public static final String EMAIL_KEY = "email";
     public static final String ADDRESS_KEY = "address";
     public static final String ROLE_KEY = "role";
+    public static final String PEOPLE_NUMBER_KEY = "people";
+    public static final String DATE_TIME_KEY = "datetime";
     public static final int DEFAULT_RESTAURANT_ID = 123;
     public static final int DEFAULT_TABLE_ID = 123;
     public static final int DEFAULT_CUSTOMER_ID = 123;
@@ -35,6 +39,12 @@ public class ControllersTestUtils {
         params.add(EMAIL_KEY);
         params.add(ADDRESS_KEY);
         params.add(ROLE_KEY);
+        return params;
+    }
+    public static List<String> getAddReservationParamsKeyLis() {
+        List<String> params = new ArrayList<>();
+        params.add(PEOPLE_NUMBER_KEY);
+        params.add(DATE_TIME_KEY);
         return params;
     }
     public static HashMap<String, Object> createSignupParamsBasedOn(HashMap<String, Object> baseParams) {
@@ -75,6 +85,12 @@ public class ControllersTestUtils {
         params.put(EMAIL_KEY, DEFAULT_EMAIL);
         params.put(ADDRESS_KEY, createAddressHashMap(getDefaultAddress()));
         params.put(ROLE_KEY, User.Role.client.name());
+        return params;
+    }
+    public static HashMap<String, String> createAddReservationParams() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put(PEOPLE_NUMBER_KEY, Integer.toString(DEFAULT_PEOPLE_NUMBER));
+        params.put(DATE_TIME_KEY, DEFAULT_DATE_TIME_FORMAT);
         return params;
     }
     public static HashMap<String, String> createAddressHashMap(Address address) {

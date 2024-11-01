@@ -9,13 +9,19 @@ import mizdooni.service.ReservationService;
 import mizdooni.service.RestaurantService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static mizdooni.controllers.ControllerUtils.PARAMS_BAD_TYPE;
+import static mizdooni.controllers.ControllerUtils.PARAMS_MISSING;
 import static mizdooni.controllers.ControllersTestUtils.*;
 import static mizdooni.model.ModelTestUtils.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -175,6 +181,86 @@ public class ReservationControllerTest {
         HttpStatus actualStatus = response.getStatus();
 
         assertThat(actualData).containsExactly(dummyTime);
+        assertThat(actualStatus).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void addReservation_RestaurantIdDoesNotExist_ThrowsNotFound() {
+        when(restaurantService.getRestaurant(DEFAULT_RESTAURANT_ID)).thenReturn(null);
+
+        assertThatThrownBy(() -> controller.addReservation(DEFAULT_RESTAURANT_ID, null))
+                .isInstanceOf(ResponseException.class)
+                .hasMessage("restaurant not found")
+                .extracting("status")
+                .isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @ParameterizedTest(name = "Missed field: {0}")
+    @MethodSource("addReservationParamsButOneOfThemDoesNotExist")
+    public void addReservation_NecessaryParamsAreNotExist_ThrowsBadRequest(String missedField, HashMap<String, String> params) {
+        assertThatThrownBy(() -> controller.addReservation(DEFAULT_RESTAURANT_ID, params))
+                .isInstanceOf(ResponseException.class)
+                .hasMessage(PARAMS_MISSING)
+                .extracting("status")
+                .isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+    private static Stream<Arguments> addReservationParamsButOneOfThemDoesNotExist() {
+        List<String> paramsKey = getAddReservationParamsKeyLis();
+        List<Arguments> args = new ArrayList<>();
+        for (String currentParam : paramsKey) {
+            HashMap<String, String> params = createAddReservationParams();
+            params.remove(currentParam);
+            args.add(Arguments.of(currentParam, params));
+        }
+        return args.stream();
+    }
+
+    @ParameterizedTest(name = "Bad type field: {0}")
+    @MethodSource("addReservationParamsButOneOfThemIsNull")
+    public void addReservation_PassedParamsDoNotHaveCorrectType_ThrowsBadRequest(String field, HashMap<String, String> params) {
+        assertThatThrownBy(() -> controller.addReservation(DEFAULT_RESTAURANT_ID, params))
+                .isInstanceOf(ResponseException.class)
+                .hasMessage(PARAMS_BAD_TYPE)
+                .extracting("status")
+                .isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+    private static Stream<Arguments> addReservationParamsButOneOfThemIsNull() {
+        List<String> paramsKey = getAddReservationParamsKeyLis();
+        List<Arguments> args = new ArrayList<>();
+        for (String currentParam : paramsKey) {
+            HashMap<String, String> params = createAddReservationParams();
+            params.put(currentParam, "!@#$%");
+            args.add(Arguments.of(currentParam, params));
+        }
+        return args.stream();
+    }
+
+    @Test
+    public void addReservation_ReserveTableFailed_ThrowsBadRequest()
+            throws UserNotFound, DateTimeInThePast, TableNotFound, ReservationNotInOpenTimes,
+            ManagerReservationNotAllowed, RestaurantNotFound, InvalidWorkingTime {
+        doThrow(new DateTimeInThePast()).when(reservationService).
+                reserveTable(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUMBER, DEFAULT_LOCAL_DATE_TIME);
+
+        assertThatThrownBy(() -> controller.addReservation(DEFAULT_RESTAURANT_ID, createAddReservationParams()))
+                .isInstanceOf(ResponseException.class)
+                .extracting("status")
+                .isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void addReservation_SuccessReserveTable_ReturnsOkStatusWithReservation()
+            throws UserNotFound, DateTimeInThePast, TableNotFound, ReservationNotInOpenTimes,
+            ManagerReservationNotAllowed, RestaurantNotFound, InvalidWorkingTime {
+        Reservation dummyReservation = mock(Reservation.class);
+        when(reservationService.reserveTable(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUMBER, DEFAULT_LOCAL_DATE_TIME))
+                .thenReturn(dummyReservation);
+
+        Response response = controller.addReservation(DEFAULT_RESTAURANT_ID, createAddReservationParams());
+        Reservation actualReservation = (Reservation) response.getData();
+        HttpStatus actualStatus = response.getStatus();
+
+        assertThat(actualReservation).isEqualTo(dummyReservation);
         assertThat(actualStatus).isEqualTo(HttpStatus.OK);
     }
 }

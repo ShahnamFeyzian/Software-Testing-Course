@@ -89,6 +89,7 @@ public class ReservationController {
         LocalDateTime datetime;
 
         try {
+            //FIXME: This part of code has low quality for creating object manually and not using auto mapper and DTO
             people = Integer.parseInt(params.get("people"));
             datetime = LocalDateTime.parse(params.get("datetime"), DATETIME_FORMATTER);
         } catch (Exception ex) {

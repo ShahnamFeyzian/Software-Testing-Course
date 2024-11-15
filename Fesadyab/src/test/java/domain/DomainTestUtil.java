@@ -4,6 +4,7 @@ public class DomainTestUtil {
     public static int TRANSACTION_ID = 1;
     public static int ACCOUNT_ID = 1;
     public static int AMOUNT = 1000;
+    public static int THRESHOLD = 1000;
     public static Transaction createTransaction() {
         Transaction transaction = new Transaction();
         transaction.transactionId = TRANSACTION_ID;

@@ -149,4 +149,18 @@ public class TransactionEngineTest {
 
         assertThat(diff).isZero();
     }
+
+    @Test
+    public void getAverageTransactionAmountByAccount_AccountIdHaveNoTransaction_ReturnsZero() {
+        int avg = transactionEngine.getAverageTransactionAmountByAccount(5);
+
+        assertThat(avg).isZero();
+    }
+
+    @Test
+    public void getAverageTransactionAmountByAccount_AccountIdHaveTransaction_ReturnsAverageOfTransactionAmount() {
+        int avg = transactionEngine.getAverageTransactionAmountByAccount(1);
+
+        assertThat(avg).isEqualTo(AMOUNT);
+    }
 }

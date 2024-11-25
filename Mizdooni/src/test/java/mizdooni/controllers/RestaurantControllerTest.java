@@ -79,14 +79,14 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    void getRestaurant_BadParamTypeForRestaurantId_ResponsesBadRequest() throws Exception {
+    public void getRestaurant_BadParamTypeForRestaurantId_ResponsesBadRequest() throws Exception {
         String url = "/restaurants/invalid_type_instead_integer";
 
         perform(url).andExpect(status().isBadRequest());
     }
 
     @Test
-    void getRestaurant_RestaurantIdDoesNotExist_ResponsesNotFound() throws Exception {
+    public void getRestaurant_RestaurantIdDoesNotExist_ResponsesNotFound() throws Exception {
         String url = "/restaurants/" + 1234567;
         when(restaurantService.getRestaurant(1234567)).thenReturn(null);
 
@@ -94,7 +94,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    void getRestaurant_RestaurantExists_ResponsesOkAndReturnsRestaurant() throws Exception {
+    public void getRestaurant_RestaurantExists_ResponsesOkAndReturnsRestaurant() throws Exception {
         String url = "/restaurants/" + restaurant.getId();
 
         ResultActions res = perform(url).andExpect(status().isOk());
@@ -104,14 +104,14 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    void getRestaurants_PageIsNotPass_ResponsesBadRequest() throws Exception {
+    public void getRestaurants_PageIsNotPass_ResponsesBadRequest() throws Exception {
         String url = "/restaurants";
 
         perform(url).andExpect(status().isBadRequest());
     }
 
     @Test
-    void getRestaurants_PageValueIsInvalid_ResponsesBadRequest() throws Exception {
+    public void getRestaurants_PageValueIsInvalid_ResponsesBadRequest() throws Exception {
         String url = "/restaurants?page=-1";
         RestaurantSearchFilter emptyFilter = new RestaurantSearchFilter();
         doThrow(new IllegalArgumentException("invalid page number")).
@@ -121,7 +121,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    void getRestaurants_FilterIsEmpty_ResponsesOkAndReturnsAllRestaurants() throws Exception {
+    public void getRestaurants_FilterIsEmpty_ResponsesOkAndReturnsAllRestaurants() throws Exception {
         String url = "/restaurants?page=" + DEFAULT_PAGE_NUM;
 
         ResultActions res = perform(url).andExpect(status().isOk());
@@ -135,7 +135,7 @@ public class RestaurantControllerTest {
     @Test
     @Disabled
     // TODO: find its fucking problem to convert the body to filter argument in controller endpoint
-    void getRestaurants_FilterIsValid_ResponsesOkAndReturnsAllRestaurants() throws Exception {
+    public void getRestaurants_FilterIsValid_ResponsesOkAndReturnsAllRestaurants() throws Exception {
         String url = "/restaurants?page=" + DEFAULT_PAGE_NUM;
         RestaurantSearchFilter filter = new RestaurantSearchFilter();
         filter.setName(DEFAULT_NAME);
@@ -153,14 +153,14 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    void getManagerRestaurants_BadParamTypeForManagerId_ResponsesBadRequest() throws Exception {
+    public void getManagerRestaurants_BadParamTypeForManagerId_ResponsesBadRequest() throws Exception {
         String url = "/restaurants/manager/invalid_type_instead_integer";
 
         perform(url).andExpect(status().isBadRequest());
     }
 
     @Test
-    void getManagerRestaurants_ManagerIdDoesNotExist_ResponsesOkAndReturnsEmptyList() throws Exception {
+    public void getManagerRestaurants_ManagerIdDoesNotExist_ResponsesOkAndReturnsEmptyList() throws Exception {
         String url = "/restaurants/manager/" + 1234567;
         when(restaurantService.getManagerRestaurants(1234567)).thenReturn(List.of());
 
@@ -171,7 +171,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    void getManagerRestaurants_ManagerIdExists_ResponsesOkAndReturnsRestaurant() throws Exception {
+    public void getManagerRestaurants_ManagerIdExists_ResponsesOkAndReturnsRestaurant() throws Exception {
         String url = "/restaurants/manager/" + manager.getId();
 
         ResultActions res = perform(url).andExpect(status().isOk());
@@ -183,14 +183,14 @@ public class RestaurantControllerTest {
     //TODO: add addRestaurant test scenarios here
 
     @Test
-    void validateRestaurantName_DataIsNotPass_ResponsesBadRequest() throws Exception {
+    public void validateRestaurantName_DataIsNotPass_ResponsesBadRequest() throws Exception {
         String url = "/validate/restaurant-name";
 
         perform(url).andExpect(status().isBadRequest());
     }
 
     @Test
-    void validateRestaurantName_RestaurantWithDataNameIsExists_ResponsesConflict() throws Exception {
+    public void validateRestaurantName_RestaurantWithDataNameIsExists_ResponsesConflict() throws Exception {
         String repetitiveName = "repetitive_name";
         String url = "/validate/restaurant-name?data=" + repetitiveName;
         when(restaurantService.restaurantExists(repetitiveName)).thenReturn(true);
@@ -199,7 +199,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    void validateRestaurantName_RestaurantWithDataNameIsNotExist_ResponsesOk() throws Exception {
+    public void validateRestaurantName_RestaurantWithDataNameIsNotExist_ResponsesOk() throws Exception {
         String uniqueName = "unique_name";
         String url = "/validate/restaurant-name?data=" + uniqueName;
         when(restaurantService.restaurantExists(uniqueName)).thenReturn(false);
@@ -208,7 +208,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    void getRestaurantTypes_TouchTheEndpoint_ResponsesOkAndReturnsASetOfAllRestaurantTypes() throws Exception {
+    public void getRestaurantTypes_TouchTheEndpoint_ResponsesOkAndReturnsASetOfAllRestaurantTypes() throws Exception {
         String url = "/restaurants/types";
         when(restaurantService.getRestaurantTypes()).thenReturn(Set.of(restaurant.getType()));
         String expectedSetStr = "[\"type\"]";
@@ -220,7 +220,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    void getRestaurantLocations_TouchTheEndpoint_ResponsesOkAndReturnsMapOfCountryToSetOfCities() throws Exception {
+    public void getRestaurantLocations_TouchTheEndpoint_ResponsesOkAndReturnsMapOfCountryToSetOfCities() throws Exception {
         String url = "/restaurants/locations";
         Map<String, Set<String>> returnedData = new HashMap<>();
         returnedData.put(restaurant.getAddress().getCountry(), Set.of(restaurant.getAddress().getCity()));

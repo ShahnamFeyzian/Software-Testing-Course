@@ -176,4 +176,31 @@ public class RestaurantControllerTest {
 
         assertThat(restaurantId).isEqualTo(restaurant.getId());
     }
+
+    //TODO: add addRestaurant test scenarios here
+
+    @Test
+    void validateRestaurantName_DataIsNotPass_ResponsesBadRequest() throws Exception {
+        String url = "/validate/restaurant-name";
+
+        perform(url).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void validateRestaurantName_RestaurantWithDataNameIsExists_ResponsesConflict() throws Exception {
+        String repetitiveName = "repetitive_name";
+        String url = "/validate/restaurant-name?data=" + repetitiveName;
+        when(restaurantService.restaurantExists(repetitiveName)).thenReturn(true);
+
+        perform(url).andExpect(status().isConflict());
+    }
+
+    @Test
+    void validateRestaurantName_RestaurantWithDataNameIsNotExist_ResponsesOk() throws Exception {
+        String uniqueName = "unique_name";
+        String url = "/validate/restaurant-name?data=" + uniqueName;
+        when(restaurantService.restaurantExists(uniqueName)).thenReturn(false);
+
+        perform(url).andExpect(status().isOk());
+    }
 }

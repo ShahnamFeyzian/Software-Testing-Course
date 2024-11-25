@@ -3,6 +3,7 @@ package mizdooni.model;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class RestaurantSearchFilter {
@@ -59,5 +60,23 @@ public class RestaurantSearchFilter {
 
     public void setOrder(String order) {
         this.order = order;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RestaurantSearchFilter that = (RestaurantSearchFilter) o;
+        if (!Objects.equals(name, that.name)) return false;
+        if (!Objects.equals(type, that.type)) return false;
+        if (!Objects.equals(location, that.location)) return false;
+        if (!Objects.equals(sort, that.sort)) return false;
+        if (!Objects.equals(order, that.order)) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, type, location, sort, order);
     }
 }

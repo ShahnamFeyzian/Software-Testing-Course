@@ -21,7 +21,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static mizdooni.controllers.ControllersTestUtils.*;
 import static mizdooni.model.ModelTestUtils.*;
@@ -202,5 +205,31 @@ public class RestaurantControllerTest {
         when(restaurantService.restaurantExists(uniqueName)).thenReturn(false);
 
         perform(url).andExpect(status().isOk());
+    }
+
+    @Test
+    void getRestaurantTypes_TouchTheEndpoint_ResponsesOkAndReturnsASetOfAllRestaurantTypes() throws Exception {
+        String url = "/restaurants/types";
+        when(restaurantService.getRestaurantTypes()).thenReturn(Set.of(restaurant.getType()));
+        String expectedSetStr = "[\"type\"]";
+
+        ResultActions res = perform(url).andExpect(status().isOk());
+        String setStr = getDataNode(res).toString();
+
+        assertThat(setStr).isEqualTo(expectedSetStr);
+    }
+
+    @Test
+    void getRestaurantLocations_TouchTheEndpoint_ResponsesOkAndReturnsMapOfCountryToSetOfCities() throws Exception {
+        String url = "/restaurants/locations";
+        Map<String, Set<String>> returnedData = new HashMap<>();
+        returnedData.put(restaurant.getAddress().getCountry(), Set.of(restaurant.getAddress().getCity()));
+        when(restaurantService.getRestaurantLocations()).thenReturn(returnedData);
+        String expectedMapStr = "{\"country\":[\"city\"]}";
+
+        ResultActions res = perform(url).andExpect(status().isOk());
+        String mapStr = getDataNode(res).toString();
+
+        assertThat(mapStr).isEqualTo(expectedMapStr);
     }
 }

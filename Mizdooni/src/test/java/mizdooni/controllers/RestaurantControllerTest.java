@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import mizdooni.database.Database;
 import mizdooni.model.Restaurant;
 import mizdooni.model.RestaurantSearchFilter;
+import mizdooni.model.User;
 import mizdooni.response.PagedList;
 import mizdooni.service.RestaurantService;
 import mizdooni.service.UserService;
@@ -23,8 +24,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.List;
 
 import static mizdooni.controllers.ControllersTestUtils.*;
-import static mizdooni.model.ModelTestUtils.DEFAULT_NAME;
-import static mizdooni.model.ModelTestUtils.getDefaultRestaurant;
+import static mizdooni.model.ModelTestUtils.*;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -47,6 +47,7 @@ public class RestaurantControllerTest {
     private UserService userService;
 
     private Restaurant restaurant;
+    private User manager;
 
     private ResultActions perform(String url, String body) throws Exception {
         return mockMvc.perform(request(HttpMethod.GET, url)
@@ -67,9 +68,11 @@ public class RestaurantControllerTest {
     @BeforeEach
     public void setup() {
         restaurant = getDefaultRestaurant();
+        manager = getDefaultManagerUser();
         when(restaurantService.getRestaurant(restaurant.getId())).thenReturn(restaurant);
         when(restaurantService.getRestaurants(DEFAULT_PAGE_NUM, new RestaurantSearchFilter())).
                 thenReturn(new PagedList<>(List.of(restaurant), 1, DEFAULT_RESTAURANT_PAGE_SIZE));
+        when(restaurantService.getManagerRestaurants(manager.getId())).thenReturn(List.of(restaurant));
     }
 
     @Test
@@ -144,5 +147,33 @@ public class RestaurantControllerTest {
 
         assertThat(pageNumber).isEqualTo(1);
         assertThat(pageListStr).isEqualTo(List.of().toString());
+    }
+
+    @Test
+    void getManagerRestaurants_BadParamTypeForManagerId_ResponsesBadRequest() throws Exception {
+        String url = "/restaurants/manager/invalid_type_instead_integer";
+
+        perform(url).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getManagerRestaurants_ManagerIdDoesNotExist_ResponsesOkAndReturnsEmptyList() throws Exception {
+        String url = "/restaurants/manager/" + 1234567;
+        when(restaurantService.getManagerRestaurants(1234567)).thenReturn(List.of());
+
+        ResultActions res = perform(url).andExpect(status().isOk());
+        String listStr = getDataNode(res).toString();
+
+        assertThat(listStr).isEqualTo(List.of().toString());
+    }
+
+    @Test
+    void getManagerRestaurants_ManagerIdExists_ResponsesOkAndReturnsRestaurant() throws Exception {
+        String url = "/restaurants/manager/" + manager.getId();
+
+        ResultActions res = perform(url).andExpect(status().isOk());
+        int restaurantId = Integer.parseInt(getDataNode(res).get(0).get("id").toString());
+
+        assertThat(restaurantId).isEqualTo(restaurant.getId());
     }
 }

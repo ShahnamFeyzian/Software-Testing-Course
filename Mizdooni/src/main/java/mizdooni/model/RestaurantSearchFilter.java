@@ -1,11 +1,14 @@
 package mizdooni.model;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Getter
 public class RestaurantSearchFilter {
     private String name;
     private String type;

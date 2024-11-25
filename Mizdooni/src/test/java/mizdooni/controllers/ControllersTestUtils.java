@@ -30,6 +30,7 @@ public class ControllersTestUtils {
     public static final int DEFAULT_RESERVATION_NUM = 2;
     public static final int DEFAULT_PEOPLE_NUM = 4;
     public static final int DEFAULT_PAGE_NUM = 1;
+    public static final int DEFAULT_RESTAURANT_PAGE_SIZE = 12;
     public static HashMap<String, String> createLoginParams() {
         HashMap<String, String> params = new HashMap<>();
         params.put(USER_NAME_KEY, DEFAULT_NAME);

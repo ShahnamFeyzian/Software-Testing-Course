@@ -55,13 +55,14 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    public void getRestaurant_BadParamTypeForRestaurantId_Returns() throws Exception {
+    void getRestaurant_BadParamTypeForRestaurantId_ResponsesBadRequest() throws Exception {
         String url = "/restaurants/invalid_type_instead_integer";
+
         perform(url).andExpect(status().isBadRequest());
     }
 
     @Test
-    public void getRestaurant_RestaurantIdDoesNotExist_Responses() throws Exception {
+    void getRestaurant_RestaurantIdDoesNotExist_ResponsesNotFound() throws Exception {
         String url = "/restaurants/" + 1234567;
         when(restaurantService.getRestaurant(1234567)).thenReturn(null);
 
@@ -69,7 +70,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    public void getRestaurant_RestaurantExists_Responses() throws Exception {
+    void getRestaurant_RestaurantExists_ResponsesOkAndReturnsRestaurant() throws Exception {
         String url = "/restaurants/" + restaurant.getId();
 
         ResultActions res = perform(url).andExpect(status().isOk());

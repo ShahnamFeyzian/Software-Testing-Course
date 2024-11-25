@@ -98,7 +98,7 @@ class RestaurantController {
         try {
             Set<String> types = restaurantService.getRestaurantTypes();
             return Response.ok("restaurant types", types);
-        } catch (Exception ex) {
+        } catch (Exception ex) { // FIXME: This endpoint has not any input, so the bad request response for it is unusual
             throw new ResponseException(HttpStatus.BAD_REQUEST, ex);
         }
     }
@@ -108,7 +108,7 @@ class RestaurantController {
         try {
             Map<String, Set<String>> locations = restaurantService.getRestaurantLocations();
             return Response.ok("restaurant locations", locations);
-        } catch (Exception ex) {
+        } catch (Exception ex) { // FIXME: This endpoint has not any input, so the bad request response for it is unusual
             throw new ResponseException(HttpStatus.BAD_REQUEST, ex);
         }
     }

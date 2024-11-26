@@ -134,17 +134,14 @@ public class RestaurantControllerTest {
 
     @Test
     @Disabled
-    // TODO: find its fucking problem to convert the body to filter argument in controller endpoint
     public void getRestaurants_FilterIsValid_ResponsesOkAndReturnsAllRestaurants() throws Exception {
-        String url = "/restaurants?page=" + DEFAULT_PAGE_NUM;
+        String url = "/restaurants?page=" + DEFAULT_PAGE_NUM + "&name=" + DEFAULT_NAME;
         RestaurantSearchFilter filter = new RestaurantSearchFilter();
         filter.setName(DEFAULT_NAME);
         when(restaurantService.getRestaurants(DEFAULT_PAGE_NUM, filter)).
                 thenReturn(new PagedList<>(List.of(), 1, DEFAULT_RESTAURANT_PAGE_SIZE));
 
-
-        String body = "{filter:" + mapper.writeValueAsString(filter) + "}";
-        ResultActions res = perform(url, body).andExpect(status().isOk());
+        ResultActions res = perform(url).andExpect(status().isOk());
         int pageNumber = Integer.parseInt(getDataNode(res).get("page").toString());
         String pageListStr = getDataNode(res).get("pageList").toString();
 

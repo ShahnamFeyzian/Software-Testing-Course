@@ -3,7 +3,9 @@ package mizdooni.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import mizdooni.database.Database;
+import mizdooni.exceptions.InvalidManagerRestaurant;
 import mizdooni.exceptions.RestaurantNotFound;
+import mizdooni.exceptions.UserNotManager;
 import mizdooni.model.Restaurant;
 import mizdooni.model.RestaurantSearchFilter;
 import mizdooni.model.Table;
@@ -25,9 +27,10 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 
-import static mizdooni.controllers.ControllersTestUtils.DEFAULT_PAGE_NUM;
-import static mizdooni.controllers.ControllersTestUtils.DEFAULT_RESTAURANT_PAGE_SIZE;
+import static mizdooni.controllers.ControllerUtils.PARAMS_MISSING;
+import static mizdooni.controllers.ControllersTestUtils.*;
 import static mizdooni.model.ModelTestUtils.*;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
@@ -55,7 +58,7 @@ public class TableControllerTest {
     private Table table;
 
     private ResultActions perform(String url, String body) throws Exception {
-        return mockMvc.perform(request(HttpMethod.GET, url)
+        return mockMvc.perform(request(HttpMethod.POST, url)
                 .content(body)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
@@ -104,5 +107,62 @@ public class TableControllerTest {
         String tableListStr = getDataNode(res).toString();
 
         assertThat(tableListStr).isEqualTo(expectedTableListStr);
+    }
+
+    @Test
+    public void addTables_RestaurantIdIsInvalid_ResponseBadRequest() throws Exception {
+        String url = "/tables/invalid_restaurant_id";
+
+        perform(url).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void addTables_NoRestaurantWithGivenIdExists_ResponsesNotFound() throws Exception {
+        String url = "/tables/1234";
+        when(restaurantService.getRestaurant(1234)).thenReturn(null);
+
+        perform(url).andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void addTables_SeatsNumberDoesNotExistsInParam_ResponsesBadRequest() throws Exception {
+        String url = "/tables/" + restaurant.getId();
+        String body = "{}";
+
+        perform(url, body).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void addTables_SeatsNumberHasNotIntegerTypeInParam_ResponsesBadRequest() throws Exception {
+        String url = "/tables/" + restaurant.getId();
+        String body = "{\"seatsNumber\":\"invalid_type_for_seatsNumber\"}";
+
+        perform(url, body).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void addTables_NoUserLoggedInOrUserIsNotManager_ResponsesBadRequest() throws Exception {
+        String url = "/tables/" + restaurant.getId();
+        String body = "{\"seatsNumber\":\"4\"}";
+        doThrow(new UserNotManager()).when(tableService).addTable(restaurant.getId(), 4);
+
+        perform(url, body).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void addTables_LoggedInManagerIsNotRestaurantManager_ResponsesBadRequest() throws Exception {
+        String url = "/tables/" + restaurant.getId();
+        String body = "{\"seatsNumber\":\"4\"}";
+        doThrow(new InvalidManagerRestaurant()).when(tableService).addTable(restaurant.getId(), 4);
+
+        perform(url, body).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void addTables_EverythingIsOk_ResponsesOkAndTableAddedToRestaurant() throws Exception {
+        String url = "/tables/" + restaurant.getId();
+        String body = "{\"seatsNumber\":\"4\"}";
+
+        perform(url, body).andExpect(status().isOk());
     }
 }

@@ -56,22 +56,6 @@ public class RestaurantControllerTest {
     private Restaurant restaurant;
     private User manager;
 
-    private ResultActions perform(String url, String body) throws Exception {
-        return mockMvc.perform(request(HttpMethod.POST, url)
-                .content(body)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON));
-    }
-
-    private ResultActions perform(String url) throws Exception {
-        return mockMvc.perform(get(url).accept(MediaType.APPLICATION_JSON));
-    }
-
-    private JsonNode getDataNode(ResultActions res) throws Exception {
-        String body = res.andReturn().getResponse().getContentAsString();
-        return mapper.readTree(body).get("data");
-    }
-
     @BeforeEach
     public void setup() {
         restaurant = getDefaultRestaurant();
@@ -86,7 +70,7 @@ public class RestaurantControllerTest {
     public void getRestaurant_BadParamTypeForRestaurantId_ResponsesBadRequest() throws Exception {
         String url = "/restaurants/invalid_type_instead_integer";
 
-        perform(url).andExpect(status().isBadRequest());
+        perform(mockMvc, url).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -94,15 +78,15 @@ public class RestaurantControllerTest {
         String url = "/restaurants/" + 1234567;
         when(restaurantService.getRestaurant(1234567)).thenReturn(null);
 
-        perform(url).andExpect(status().isNotFound());
+        perform(mockMvc, url).andExpect(status().isNotFound());
     }
 
     @Test
     public void getRestaurant_RestaurantExists_ResponsesOkAndReturnsRestaurant() throws Exception {
         String url = "/restaurants/" + restaurant.getId();
 
-        ResultActions res = perform(url).andExpect(status().isOk());
-        int restaurantId = Integer.parseInt(getDataNode(res).get("id").toString());
+        ResultActions res = perform(mockMvc, url).andExpect(status().isOk());
+        int restaurantId = Integer.parseInt(getDataNode(mapper, res).get("id").toString());
 
         assertThat(restaurantId).isEqualTo(restaurant.getId());
     }
@@ -111,7 +95,7 @@ public class RestaurantControllerTest {
     public void getRestaurants_PageIsNotPass_ResponsesBadRequest() throws Exception {
         String url = "/restaurants";
 
-        perform(url).andExpect(status().isBadRequest());
+        perform(mockMvc, url).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -121,16 +105,16 @@ public class RestaurantControllerTest {
         doThrow(new IllegalArgumentException("invalid page number")).
                 when(restaurantService).getRestaurants(-1, emptyFilter);
 
-        perform(url).andExpect(status().isBadRequest());
+        perform(mockMvc, url).andExpect(status().isBadRequest());
     }
 
     @Test
     public void getRestaurants_FilterIsEmpty_ResponsesOkAndReturnsAllRestaurants() throws Exception {
         String url = "/restaurants?page=" + DEFAULT_PAGE_NUM;
 
-        ResultActions res = perform(url).andExpect(status().isOk());
-        int pageNumber = Integer.parseInt(getDataNode(res).get("page").toString());
-        int restaurantId = Integer.parseInt(getDataNode(res).get("pageList").get(0).get("id").toString());
+        ResultActions res = perform(mockMvc, url).andExpect(status().isOk());
+        int pageNumber = Integer.parseInt(getDataNode(mapper, res).get("page").toString());
+        int restaurantId = Integer.parseInt(getDataNode(mapper, res).get("pageList").get(0).get("id").toString());
 
         assertThat(pageNumber).isEqualTo(1);
         assertThat(restaurantId).isEqualTo(restaurant.getId());
@@ -144,9 +128,9 @@ public class RestaurantControllerTest {
         when(restaurantService.getRestaurants(DEFAULT_PAGE_NUM, filter)).
                 thenReturn(new PagedList<>(List.of(), 1, DEFAULT_RESTAURANT_PAGE_SIZE));
 
-        ResultActions res = perform(url).andExpect(status().isOk());
-        int pageNumber = Integer.parseInt(getDataNode(res).get("page").toString());
-        String pageListStr = getDataNode(res).get("pageList").toString();
+        ResultActions res = perform(mockMvc, url).andExpect(status().isOk());
+        int pageNumber = Integer.parseInt(getDataNode(mapper, res).get("page").toString());
+        String pageListStr = getDataNode(mapper, res).get("pageList").toString();
 
         assertThat(pageNumber).isEqualTo(1);
         assertThat(pageListStr).isEqualTo(List.of().toString());
@@ -156,7 +140,7 @@ public class RestaurantControllerTest {
     public void getManagerRestaurants_BadParamTypeForManagerId_ResponsesBadRequest() throws Exception {
         String url = "/restaurants/manager/invalid_type_instead_integer";
 
-        perform(url).andExpect(status().isBadRequest());
+        perform(mockMvc, url).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -164,8 +148,8 @@ public class RestaurantControllerTest {
         String url = "/restaurants/manager/" + 1234567;
         when(restaurantService.getManagerRestaurants(1234567)).thenReturn(List.of());
 
-        ResultActions res = perform(url).andExpect(status().isOk());
-        String listStr = getDataNode(res).toString();
+        ResultActions res = perform(mockMvc, url).andExpect(status().isOk());
+        String listStr = getDataNode(mapper, res).toString();
 
         assertThat(listStr).isEqualTo(List.of().toString());
     }
@@ -174,8 +158,8 @@ public class RestaurantControllerTest {
     public void getManagerRestaurants_ManagerIdExists_ResponsesOkAndReturnsRestaurant() throws Exception {
         String url = "/restaurants/manager/" + manager.getId();
 
-        ResultActions res = perform(url).andExpect(status().isOk());
-        int restaurantId = Integer.parseInt(getDataNode(res).get(0).get("id").toString());
+        ResultActions res = perform(mockMvc, url).andExpect(status().isOk());
+        int restaurantId = Integer.parseInt(getDataNode(mapper, res).get(0).get("id").toString());
 
         assertThat(restaurantId).isEqualTo(restaurant.getId());
     }
@@ -185,7 +169,7 @@ public class RestaurantControllerTest {
     public void addRestaurant_RequiredParamsDoNotExist_ResponsesBadRequest(String missedField, HashMap<String, String> params) throws Exception {
         String url = "/restaurants";
 
-        perform(url, params.toString()).andExpect(status().isBadRequest());
+        perform(mockMvc, url, params.toString()).andExpect(status().isBadRequest());
     }
     private static Stream<Arguments> addRestaurantParamsButOneOfThemDoesNotExist() {
         List<String> paramsKey = getAddRestaurantParamsKeyLis();
@@ -205,7 +189,7 @@ public class RestaurantControllerTest {
     public void addRestaurant_ParamsAreBlank_ResponsesBadRequest(String blankField, HashMap<String, String> params) throws Exception {
         String url = "/restaurants";
 
-        perform(url, params.toString()).andExpect(status().isBadRequest());
+        perform(mockMvc, url, params.toString()).andExpect(status().isBadRequest());
     }
     private static Stream<Arguments> addRestaurantParamsButOneOfThemIsBlank() {
         List<String> paramsKey = getAddRestaurantParamsKeyLis();
@@ -234,7 +218,7 @@ public class RestaurantControllerTest {
     public void addRestaurant_ParamHasBadType_ResponsesBadRequest(String badTypeField, HashMap<String, String> params) throws Exception {
         String url = "/restaurants";
 
-        perform(url, params.toString()).andExpect(status().isBadRequest());
+        perform(mockMvc, url, params.toString()).andExpect(status().isBadRequest());
     }
     private static Stream<Arguments> addRestaurantParamsButOneOfThemHasBadType() {
         List<String> paramsKey = getAddRestaurantParamsKeyLis();
@@ -255,7 +239,7 @@ public class RestaurantControllerTest {
                 .addRestaurant(DEFAULT_NAME, DEFAULT_TYPE, DEFAULT_LOCAL_TIME, DEFAULT_LOCAL_TIME, DEFAULT_DESCRIPTION, getDefaultAddress(), DEFAULT_IMAGE_LINK);
 
         String body = mapper.writeValueAsString(createAddRestaurantParams());
-        perform(url, body).andExpect(status().isBadRequest());
+        perform(mockMvc, url, body).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -265,7 +249,7 @@ public class RestaurantControllerTest {
                 .addRestaurant(DEFAULT_NAME, DEFAULT_TYPE, DEFAULT_LOCAL_TIME, DEFAULT_LOCAL_TIME, DEFAULT_DESCRIPTION, getDefaultAddress(), DEFAULT_IMAGE_LINK);
 
         String body = mapper.writeValueAsString(createAddRestaurantParams());
-        perform(url, body).andExpect(status().isBadRequest());
+        perform(mockMvc, url, body).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -275,7 +259,7 @@ public class RestaurantControllerTest {
                 .addRestaurant(DEFAULT_NAME, DEFAULT_TYPE, DEFAULT_LOCAL_TIME, DEFAULT_LOCAL_TIME, DEFAULT_DESCRIPTION, getDefaultAddress(), DEFAULT_IMAGE_LINK);
 
         String body = mapper.writeValueAsString(createAddRestaurantParams());
-        perform(url, body).andExpect(status().isBadRequest());
+        perform(mockMvc, url, body).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -285,8 +269,8 @@ public class RestaurantControllerTest {
                 .thenReturn(1234);
 
         String body = mapper.writeValueAsString(createAddRestaurantParams());
-        ResultActions result = perform(url, body).andExpect(status().isOk());
-        String restaurantIdStr = getDataNode(result).toString();
+        ResultActions result = perform(mockMvc, url, body).andExpect(status().isOk());
+        String restaurantIdStr = getDataNode(mapper, result).toString();
 
         assertThat(restaurantIdStr).isEqualTo("1234");
     }
@@ -295,7 +279,7 @@ public class RestaurantControllerTest {
     public void validateRestaurantName_DataIsNotPass_ResponsesBadRequest() throws Exception {
         String url = "/validate/restaurant-name";
 
-        perform(url).andExpect(status().isBadRequest());
+        perform(mockMvc, url).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -304,7 +288,7 @@ public class RestaurantControllerTest {
         String url = "/validate/restaurant-name?data=" + repetitiveName;
         when(restaurantService.restaurantExists(repetitiveName)).thenReturn(true);
 
-        perform(url).andExpect(status().isConflict());
+        perform(mockMvc, url).andExpect(status().isConflict());
     }
 
     @Test
@@ -313,7 +297,7 @@ public class RestaurantControllerTest {
         String url = "/validate/restaurant-name?data=" + uniqueName;
         when(restaurantService.restaurantExists(uniqueName)).thenReturn(false);
 
-        perform(url).andExpect(status().isOk());
+        perform(mockMvc, url).andExpect(status().isOk());
     }
 
     @Test
@@ -322,8 +306,8 @@ public class RestaurantControllerTest {
         when(restaurantService.getRestaurantTypes()).thenReturn(Set.of(restaurant.getType()));
         String expectedSetStr = "[\"type\"]";
 
-        ResultActions res = perform(url).andExpect(status().isOk());
-        String setStr = getDataNode(res).toString();
+        ResultActions res = perform(mockMvc, url).andExpect(status().isOk());
+        String setStr = getDataNode(mapper, res).toString();
 
         assertThat(setStr).isEqualTo(expectedSetStr);
     }
@@ -336,8 +320,8 @@ public class RestaurantControllerTest {
         when(restaurantService.getRestaurantLocations()).thenReturn(returnedData);
         String expectedMapStr = "{\"country\":[\"city\"]}";
 
-        ResultActions res = perform(url).andExpect(status().isOk());
-        String mapStr = getDataNode(res).toString();
+        ResultActions res = perform(mockMvc, url).andExpect(status().isOk());
+        String mapStr = getDataNode(mapper, res).toString();
 
         assertThat(mapStr).isEqualTo(expectedMapStr);
     }

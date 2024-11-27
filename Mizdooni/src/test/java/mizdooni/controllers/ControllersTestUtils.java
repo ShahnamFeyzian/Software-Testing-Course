@@ -1,8 +1,14 @@
 package mizdooni.controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import mizdooni.model.Address;
 import mizdooni.model.Rating;
 import mizdooni.model.User;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +16,8 @@ import java.util.List;
 
 import static mizdooni.controllers.ControllerUtils.*;
 import static mizdooni.model.ModelTestUtils.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 
 public class ControllersTestUtils {
     public static final String DEFAULT_DATE_FORMAT = DEFAULT_LOCAL_DATE.format(DATE_FORMATTER);
@@ -152,5 +160,21 @@ public class ControllersTestUtils {
         ratingMap.put("ambiance", rating.ambiance);
         ratingMap.put("overall", rating.overall);
         return ratingMap;
+    }
+
+    public static ResultActions perform(MockMvc mockMvc, String url, String body) throws Exception {
+        return mockMvc.perform(request(HttpMethod.POST, url)
+                .content(body)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+    }
+
+    public static ResultActions perform(MockMvc mockMvc, String url) throws Exception {
+        return mockMvc.perform(get(url).accept(MediaType.APPLICATION_JSON));
+    }
+
+    public static JsonNode getDataNode(ObjectMapper mapper, ResultActions res) throws Exception {
+        String body = res.andReturn().getResponse().getContentAsString();
+        return mapper.readTree(body).get("data");
     }
 }

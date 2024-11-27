@@ -57,22 +57,6 @@ public class TableControllerTest {
     private Restaurant restaurant;
     private Table table;
 
-    private ResultActions perform(String url, String body) throws Exception {
-        return mockMvc.perform(request(HttpMethod.POST, url)
-                .content(body)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON));
-    }
-
-    private ResultActions perform(String url) throws Exception {
-        return mockMvc.perform(get(url).accept(MediaType.APPLICATION_JSON));
-    }
-
-    private JsonNode getDataNode(ResultActions res) throws Exception {
-        String body = res.andReturn().getResponse().getContentAsString();
-        return mapper.readTree(body).get("data");
-    }
-
     @BeforeEach
     public void setup() throws RestaurantNotFound {
         restaurant = getDefaultRestaurant();
@@ -87,7 +71,7 @@ public class TableControllerTest {
     public void getTables_RestaurantIdTypeIsInvalid_ResponsesBadRequest() throws Exception {
         String url = "/tables/invalid_restaurant_id";
 
-        perform(url).andExpect(status().isBadRequest());
+        perform(mockMvc, url).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -95,7 +79,7 @@ public class TableControllerTest {
         String url = "/tables/1234";
         when(restaurantService.getRestaurant(1234)).thenReturn(null);
 
-        perform(url).andExpect(status().isNotFound());
+        perform(mockMvc, url).andExpect(status().isNotFound());
     }
 
     @Test
@@ -103,8 +87,8 @@ public class TableControllerTest {
         String url = "/tables/" + restaurant.getId();
         String expectedTableListStr = "[{\"tableNumber\":0,\"seatsNumber\":4}]";
 
-        ResultActions res = perform(url).andExpect(status().isOk());
-        String tableListStr = getDataNode(res).toString();
+        ResultActions res = perform(mockMvc, url).andExpect(status().isOk());
+        String tableListStr = getDataNode(mapper, res).toString();
 
         assertThat(tableListStr).isEqualTo(expectedTableListStr);
     }
@@ -113,7 +97,7 @@ public class TableControllerTest {
     public void addTables_RestaurantIdIsInvalid_ResponseBadRequest() throws Exception {
         String url = "/tables/invalid_restaurant_id";
 
-        perform(url).andExpect(status().isBadRequest());
+        perform(mockMvc, url).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -121,7 +105,7 @@ public class TableControllerTest {
         String url = "/tables/1234";
         when(restaurantService.getRestaurant(1234)).thenReturn(null);
 
-        perform(url).andExpect(status().isNotFound());
+        perform(mockMvc, url).andExpect(status().isNotFound());
     }
 
     @Test
@@ -129,7 +113,7 @@ public class TableControllerTest {
         String url = "/tables/" + restaurant.getId();
         String body = "{}";
 
-        perform(url, body).andExpect(status().isBadRequest());
+        perform(mockMvc, url, body).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -137,7 +121,7 @@ public class TableControllerTest {
         String url = "/tables/" + restaurant.getId();
         String body = "{\"seatsNumber\":\"invalid_type_for_seatsNumber\"}";
 
-        perform(url, body).andExpect(status().isBadRequest());
+        perform(mockMvc, url, body).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -146,7 +130,7 @@ public class TableControllerTest {
         String body = "{\"seatsNumber\":\"4\"}";
         doThrow(new UserNotManager()).when(tableService).addTable(restaurant.getId(), 4);
 
-        perform(url, body).andExpect(status().isBadRequest());
+        perform(mockMvc, url, body).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -155,7 +139,7 @@ public class TableControllerTest {
         String body = "{\"seatsNumber\":\"4\"}";
         doThrow(new InvalidManagerRestaurant()).when(tableService).addTable(restaurant.getId(), 4);
 
-        perform(url, body).andExpect(status().isBadRequest());
+        perform(mockMvc, url, body).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -163,6 +147,6 @@ public class TableControllerTest {
         String url = "/tables/" + restaurant.getId();
         String body = "{\"seatsNumber\":\"4\"}";
 
-        perform(url, body).andExpect(status().isOk());
+        perform(mockMvc, url, body).andExpect(status().isOk());
     }
 }

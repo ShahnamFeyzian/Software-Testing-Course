@@ -1,6 +1,5 @@
 package mizdooni.controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import mizdooni.database.Database;
 import mizdooni.exceptions.InvalidManagerRestaurant;
@@ -9,7 +8,6 @@ import mizdooni.exceptions.UserNotManager;
 import mizdooni.model.Restaurant;
 import mizdooni.model.RestaurantSearchFilter;
 import mizdooni.model.Table;
-import mizdooni.model.User;
 import mizdooni.response.PagedList;
 import mizdooni.service.RestaurantService;
 import mizdooni.service.TableService;
@@ -19,21 +17,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 
-import static mizdooni.controllers.ControllerUtils.PARAMS_MISSING;
 import static mizdooni.controllers.ControllersTestUtils.*;
 import static mizdooni.model.ModelTestUtils.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.assertj.core.api.Assertions.*;
 

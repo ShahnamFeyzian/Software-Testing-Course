@@ -57,7 +57,7 @@ public class RestaurantControllerTest {
     private User manager;
 
     private ResultActions perform(String url, String body) throws Exception {
-        return mockMvc.perform(request(HttpMethod.GET, url)
+        return mockMvc.perform(request(HttpMethod.POST, url)
                 .content(body)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
@@ -284,7 +284,8 @@ public class RestaurantControllerTest {
         when(restaurantService.addRestaurant(DEFAULT_NAME, DEFAULT_TYPE, DEFAULT_LOCAL_TIME, DEFAULT_LOCAL_TIME, DEFAULT_DESCRIPTION, getDefaultAddress(), DEFAULT_IMAGE_LINK))
                 .thenReturn(1234);
 
-        ResultActions result = perform(url).andExpect(status().isOk());
+        String body = mapper.writeValueAsString(createAddRestaurantParams());
+        ResultActions result = perform(url, body).andExpect(status().isOk());
         String restaurantIdStr = getDataNode(result).toString();
 
         assertThat(restaurantIdStr).isEqualTo("1234");

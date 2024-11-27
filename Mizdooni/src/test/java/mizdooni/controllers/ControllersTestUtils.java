@@ -8,13 +8,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static mizdooni.controllers.ControllerUtils.DATETIME_FORMATTER;
-import static mizdooni.controllers.ControllerUtils.DATE_FORMATTER;
+import static mizdooni.controllers.ControllerUtils.*;
 import static mizdooni.model.ModelTestUtils.*;
 
 public class ControllersTestUtils {
     public static final String DEFAULT_DATE_FORMAT = DEFAULT_LOCAL_DATE.format(DATE_FORMATTER);
-    public static final String DEFAULT_TIME_FORMAT = DEFAULT_LOCAL_TIME.format(DATE_FORMATTER);
+    public static final String DEFAULT_TIME_FORMAT = DEFAULT_LOCAL_TIME.format(TIME_FORMATTER);
     public static final String DEFAULT_DATE_TIME_FORMAT = DEFAULT_LOCAL_DATE_TIME.format(DATETIME_FORMATTER);
     public static final String USER_NAME_KEY = "username";
     public static final String USER_PASS_KEY = "password";
@@ -30,7 +29,7 @@ public class ControllersTestUtils {
     public static final String START_TIME_KEY = "startTime";
     public static final String END_TIME_KEY = "endTime";
     public static final String DESCRIPTION_KEY = "description";
-    public static final String IMAGE_LINK_KEY = "imageLink";
+    public static final String IMAGE_LINK_KEY = "image";
     public static final int DEFAULT_RESTAURANT_ID = 123;
     public static final int DEFAULT_TABLE_ID = 123;
     public static final int DEFAULT_CUSTOMER_ID = 123;

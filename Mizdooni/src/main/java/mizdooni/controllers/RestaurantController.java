@@ -67,6 +67,9 @@ class RestaurantController {
             startTime = LocalTime.parse((String) params.get("startTime"), ControllerUtils.TIME_FORMATTER);
             endTime = LocalTime.parse((String) params.get("endTime"), ControllerUtils.TIME_FORMATTER);
             Map<String, String> addr = (Map<String, String>) params.get("address");
+            if (!ControllerUtils.containsKeys(addr, "country", "city", "street")) {
+                throw new ResponseException(HttpStatus.BAD_REQUEST, PARAMS_MISSING);
+            }
             address = new Address(addr.get("country"), addr.get("city"), addr.get("street"));
         } catch (Exception ex) {
             throw new ResponseException(HttpStatus.BAD_REQUEST, PARAMS_BAD_TYPE);

@@ -3,6 +3,10 @@ package mizdooni.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import mizdooni.database.Database;
+import mizdooni.exceptions.DuplicatedRestaurantName;
+import mizdooni.exceptions.InvalidWorkingTime;
+import mizdooni.exceptions.UserNotManager;
+import mizdooni.model.Address;
 import mizdooni.model.Restaurant;
 import mizdooni.model.RestaurantSearchFilter;
 import mizdooni.model.User;
@@ -10,8 +14,10 @@ import mizdooni.response.PagedList;
 import mizdooni.service.RestaurantService;
 import mizdooni.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,10 +27,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Stream;
 
 import static mizdooni.controllers.ControllersTestUtils.*;
 import static mizdooni.model.ModelTestUtils.*;
@@ -133,7 +137,6 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    @Disabled
     public void getRestaurants_FilterIsValid_ResponsesOkAndReturnsAllRestaurants() throws Exception {
         String url = "/restaurants?page=" + DEFAULT_PAGE_NUM + "&name=" + DEFAULT_NAME;
         RestaurantSearchFilter filter = new RestaurantSearchFilter();
@@ -177,7 +180,115 @@ public class RestaurantControllerTest {
         assertThat(restaurantId).isEqualTo(restaurant.getId());
     }
 
-    //TODO: add addRestaurant test scenarios here
+    @ParameterizedTest(name = "Missed field: {0}")
+    @MethodSource("addRestaurantParamsButOneOfThemDoesNotExist")
+    public void addRestaurant_RequiredParamsDoNotExist_ResponsesBadRequest(String missedField, HashMap<String, String> params) throws Exception {
+        String url = "/restaurants";
+
+        perform(url, params.toString()).andExpect(status().isBadRequest());
+    }
+    private static Stream<Arguments> addRestaurantParamsButOneOfThemDoesNotExist() {
+        List<String> paramsKey = getAddRestaurantParamsKeyLis();
+        paramsKey.remove(ADDRESS_KEY);
+        paramsKey.remove(IMAGE_LINK_KEY);
+        List<Arguments> args = new ArrayList<>();
+        for (String currentParam : paramsKey) {
+            HashMap<String, Object> params = createAddRestaurantParams();
+            params.remove(currentParam);
+            args.add(Arguments.of(currentParam, params));
+        }
+        return args.stream();
+    }
+
+    @ParameterizedTest(name = "Blank field: {0}")
+    @MethodSource("addRestaurantParamsButOneOfThemIsBlank")
+    public void addRestaurant_ParamsAreBlank_ResponsesBadRequest(String blankField, HashMap<String, String> params) throws Exception {
+        String url = "/restaurants";
+
+        perform(url, params.toString()).andExpect(status().isBadRequest());
+    }
+    private static Stream<Arguments> addRestaurantParamsButOneOfThemIsBlank() {
+        List<String> paramsKey = getAddRestaurantParamsKeyLis();
+        paramsKey.remove(ADDRESS_KEY);
+        paramsKey.remove(IMAGE_LINK_KEY);
+        List<Arguments> args = new ArrayList<>();
+        for (String currentParam : paramsKey) {
+            HashMap<String, Object> params = createAddRestaurantParams();
+            params.put(currentParam, "");
+            args.add(Arguments.of(currentParam, params));
+        }
+        HashMap<String, Object> blankCountryAddressParams = new HashMap<>();
+        HashMap<String, Object> blankCityAddressParams = new HashMap<>();
+        HashMap<String, Object> blankStreetAddressParams = new HashMap<>();
+        blankCountryAddressParams.put(ADDRESS_KEY, createAddressHashMap(new Address("", DEFAULT_CITY, DEFAULT_STREET)));
+        blankCityAddressParams.put(ADDRESS_KEY, createAddressHashMap(new Address(DEFAULT_COUNTRY, "", DEFAULT_STREET)));
+        blankStreetAddressParams.put(ADDRESS_KEY, createAddressHashMap(new Address(DEFAULT_COUNTRY, DEFAULT_CITY, "")));
+        args.add(Arguments.of("address.country", blankCountryAddressParams));
+        args.add(Arguments.of("address.city", blankCityAddressParams));
+        args.add(Arguments.of("address.street", blankStreetAddressParams));
+        return args.stream();
+    }
+
+    @ParameterizedTest(name = "Bad type field: {0}")
+    @MethodSource("addRestaurantParamsButOneOfThemHasBadType")
+    public void addRestaurant_ParamHasBadType_ResponsesBadRequest(String badTypeField, HashMap<String, String> params) throws Exception {
+        String url = "/restaurants";
+
+        perform(url, params.toString()).andExpect(status().isBadRequest());
+    }
+    private static Stream<Arguments> addRestaurantParamsButOneOfThemHasBadType() {
+        List<String> paramsKey = getAddRestaurantParamsKeyLis();
+        paramsKey.remove(ADDRESS_KEY);
+        List<Arguments> args = new ArrayList<>();
+        for (String currentParam : paramsKey) {
+            HashMap<String, Object> params = createAddRestaurantParams();
+            params.put(currentParam, new Object());
+            args.add(Arguments.of(currentParam, params));
+        }
+        return args.stream();
+    }
+
+    @Test
+    public void addRestaurant_RepetitiveRestaurantName_ResponsesBadRequest() throws Exception {
+        String url = "/restaurants";
+        doThrow(new DuplicatedRestaurantName()).when(restaurantService)
+                .addRestaurant(DEFAULT_NAME, DEFAULT_TYPE, DEFAULT_LOCAL_TIME, DEFAULT_LOCAL_TIME, DEFAULT_DESCRIPTION, getDefaultAddress(), DEFAULT_IMAGE_LINK);
+
+        String body = mapper.writeValueAsString(createAddRestaurantParams());
+        perform(url, body).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void addRestaurant_LoggedInUserIsNotManager_ResponsesBadRequest() throws Exception {
+        String url = "/restaurants";
+        doThrow(new UserNotManager()).when(restaurantService)
+                .addRestaurant(DEFAULT_NAME, DEFAULT_TYPE, DEFAULT_LOCAL_TIME, DEFAULT_LOCAL_TIME, DEFAULT_DESCRIPTION, getDefaultAddress(), DEFAULT_IMAGE_LINK);
+
+        String body = mapper.writeValueAsString(createAddRestaurantParams());
+        perform(url, body).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void addRestaurant_RestaurantTimeIsInvalid_ResponsesBadRequest() throws Exception {
+        String url = "/restaurants";
+        doThrow(new InvalidWorkingTime()).when(restaurantService)
+                .addRestaurant(DEFAULT_NAME, DEFAULT_TYPE, DEFAULT_LOCAL_TIME, DEFAULT_LOCAL_TIME, DEFAULT_DESCRIPTION, getDefaultAddress(), DEFAULT_IMAGE_LINK);
+
+        String body = mapper.writeValueAsString(createAddRestaurantParams());
+        perform(url, body).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void addRestaurant_EveryThingIsOk_ResponsesOkAndReturnsNewRestaurantId() throws Exception {
+        String url = "/restaurants";
+        when(restaurantService.addRestaurant(DEFAULT_NAME, DEFAULT_TYPE, DEFAULT_LOCAL_TIME, DEFAULT_LOCAL_TIME, DEFAULT_DESCRIPTION, getDefaultAddress(), DEFAULT_IMAGE_LINK))
+                .thenReturn(1234);
+
+        ResultActions result = perform(url).andExpect(status().isOk());
+        String restaurantIdStr = getDataNode(result).toString();
+
+        assertThat(restaurantIdStr).isEqualTo("1234");
+    }
 
     @Test
     public void validateRestaurantName_DataIsNotPass_ResponsesBadRequest() throws Exception {

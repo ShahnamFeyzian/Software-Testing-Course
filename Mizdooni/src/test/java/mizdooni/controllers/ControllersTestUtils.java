@@ -14,6 +14,7 @@ import static mizdooni.model.ModelTestUtils.*;
 
 public class ControllersTestUtils {
     public static final String DEFAULT_DATE_FORMAT = DEFAULT_LOCAL_DATE.format(DATE_FORMATTER);
+    public static final String DEFAULT_TIME_FORMAT = DEFAULT_LOCAL_TIME.format(DATE_FORMATTER);
     public static final String DEFAULT_DATE_TIME_FORMAT = DEFAULT_LOCAL_DATE_TIME.format(DATETIME_FORMATTER);
     public static final String USER_NAME_KEY = "username";
     public static final String USER_PASS_KEY = "password";
@@ -24,6 +25,12 @@ public class ControllersTestUtils {
     public static final String DATE_TIME_KEY = "datetime";
     public static final String COMMENT_KEY = "comment";
     public static final String RATING_KEY = "rating";
+    public static final String NAME_KEY = "name";
+    public static final String TYPE_KEY = "type";
+    public static final String START_TIME_KEY = "startTime";
+    public static final String END_TIME_KEY = "endTime";
+    public static final String DESCRIPTION_KEY = "description";
+    public static final String IMAGE_LINK_KEY = "imageLink";
     public static final int DEFAULT_RESTAURANT_ID = 123;
     public static final int DEFAULT_TABLE_ID = 123;
     public static final int DEFAULT_CUSTOMER_ID = 123;
@@ -50,6 +57,17 @@ public class ControllersTestUtils {
         List<String> params = new ArrayList<>();
         params.add(PEOPLE_NUMBER_KEY);
         params.add(DATE_TIME_KEY);
+        return params;
+    }
+    public static List<String> getAddRestaurantParamsKeyLis() {
+        List<String> params = new ArrayList<>();
+        params.add(NAME_KEY);
+        params.add(TYPE_KEY);
+        params.add(START_TIME_KEY);
+        params.add(END_TIME_KEY);
+        params.add(DESCRIPTION_KEY);
+        params.add(ADDRESS_KEY);
+        params.add(IMAGE_LINK_KEY);
         return params;
     }
     public static List<String> getAddReviewParamsKeyList() {
@@ -108,6 +126,17 @@ public class ControllersTestUtils {
         HashMap<String, Object> params = new HashMap<>();
         params.put(COMMENT_KEY, DEFAULT_COMMENT);
         params.put(RATING_KEY, createRatingHashMap(getDefaultRating()));
+        return params;
+    }
+    public static HashMap<String, Object> createAddRestaurantParams() {
+        HashMap<String, Object> params = new HashMap<>();
+        params.put(NAME_KEY, DEFAULT_NAME);
+        params.put(TYPE_KEY, DEFAULT_TYPE);
+        params.put(START_TIME_KEY,  DEFAULT_TIME_FORMAT);
+        params.put(END_TIME_KEY,  DEFAULT_TIME_FORMAT);
+        params.put(DESCRIPTION_KEY, DEFAULT_DESCRIPTION);
+        params.put(ADDRESS_KEY, createAddressHashMap(getDefaultAddress()));
+        params.put(IMAGE_LINK_KEY, DEFAULT_IMAGE_LINK);
         return params;
     }
     public static HashMap<String, String> createAddressHashMap(Address address) {

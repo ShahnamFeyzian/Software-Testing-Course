@@ -26,7 +26,7 @@ public class TransactionEngineTest {
 
         int result = transactionEngine.addTransactionAndDetectFraud(transaction);
 
-        assertThat(result).isZero();
+        assertThat(result).isNotZero();
     }
 
     @Test

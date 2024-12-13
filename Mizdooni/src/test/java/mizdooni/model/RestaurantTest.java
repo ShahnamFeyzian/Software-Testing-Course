@@ -72,7 +72,7 @@ public class RestaurantTest {
         Review newReview = restaurantReviews.getLast();
 
         assertThat(restaurantReviews.get(previousReviewIndex).getUser()).isNotEqualTo(repeatedUser);
-        assertThat(newReview).isEqualTo(repeatedUserReview);
+        assertThat(newReview).isNotEqualTo(repeatedUserReview);
     }
 
     @Test

@@ -137,6 +137,21 @@ public class TransactionEngineTest {
     }
 
     @Test
+    public void getTransactionPatternAboveThreshold_OneTransactionIsEquallsToThresholdButOtherIsmoreThanIt_return1000() {
+        Transaction targetTransaction1 = createTransactionWithId(5);
+        Transaction targetTransaction2 = createTransactionWithId(6);
+        targetTransaction1.amount = 2000;
+        targetTransaction2.amount = 1000;
+        transactionEngine.addTransactionAndDetectFraud(targetTransaction1);
+        transactionEngine.addTransactionAndDetectFraud(targetTransaction2);
+        int expectedDiff = 1000;
+
+        int diff = transactionEngine.getTransactionPatternAboveThreshold(THRESHOLD);
+
+        assertThat(diff).isEqualTo(expectedDiff);
+    }
+
+    @Test
     public void getTransactionPatternAboveThreshold_MoreThanOneTransactionIsGreaterThanThresholdAndDifferenceBetweenAllOfThemIsNotSame_ReturnsZero() {
         Transaction targetTransaction1 = createTransactionWithId(5);
         Transaction targetTransaction2 = createTransactionWithId(6);
@@ -149,6 +164,8 @@ public class TransactionEngineTest {
 
         assertThat(diff).isZero();
     }
+
+
 
     @Test
     public void getAverageTransactionAmountByAccount_AccountIdHaveNoTransaction_ReturnsZero() {

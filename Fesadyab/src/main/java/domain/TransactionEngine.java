@@ -34,7 +34,7 @@ public class TransactionEngine {
         }
 
         var diff = 0;
-        var previous = transactionHistory.getFirst();
+        var previous = transactionHistory.get(0);
 
         for (Transaction txn : transactionHistory) {
             if (txn.transactionId == previous.transactionId) {

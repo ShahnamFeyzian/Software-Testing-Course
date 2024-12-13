@@ -27,4 +27,4 @@ jobs:
 
     - name: Build Fesadyab with Maven
       working-directory: ./Fesadyab
-      run: mvn package --file pom.xml
+      run: mvn clean intall --file pom.xml

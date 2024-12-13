@@ -1,0 +1,30 @@
+name: Mizdooni CI with Maven
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'Mizdooni/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'Mizdooni/**'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Build Mizdooni with Maven
+      working-directory: ./Mizdooni
+      run: mvn -B package --file pom.xml

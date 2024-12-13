@@ -27,4 +27,4 @@ jobs:
 
     - name: Build Mizdooni with Maven
       working-directory: ./Mizdooni
-      run: mvn -B package --file pom.xml
+      run: mvn -B clean install --file pom.xml

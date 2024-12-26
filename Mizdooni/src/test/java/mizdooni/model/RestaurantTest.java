@@ -41,7 +41,7 @@ public class RestaurantTest {
         restaurant.addTable(getTableWithDefaultSeatsForRestaurant(restaurant));
 
         List<Table> restaurantTables = restaurant.getTables();
-        Table newTable = restaurantTables.getLast();
+        Table newTable = restaurantTables.get(restaurantTables.size() - 1);
         int expectedTableNumberAndListSize = 4;
 
         assertThat(restaurantTables).hasSize(expectedTableNumberAndListSize);
@@ -55,7 +55,7 @@ public class RestaurantTest {
 
         restaurant.addReview(newReview);
         List<Review> restaurantReviews = restaurant.getReviews();
-        Review addedReview = restaurantReviews.getLast();
+        Review addedReview = restaurantReviews.get(restaurantReviews.size() - 1);
 
         assertThat(restaurantReviews).hasSize(4);
         assertThat(addedReview.getUser()).isEqualTo(newUser);
@@ -63,13 +63,13 @@ public class RestaurantTest {
 
     @Test
     public void addReview_ReviewWithUserThatAlreadyHasReview_DeletesPreviousReview() {
-        User repeatedUser = restaurant.getReviews().getFirst().getUser();
+        User repeatedUser = restaurant.getReviews().get(0).getUser();
         Review repeatedUserReview = getReviewWithDefaultRatingForUser(repeatedUser);
 
         restaurant.addReview(repeatedUserReview);
         List<Review> restaurantReviews = restaurant.getReviews();
         int previousReviewIndex = 0;
-        Review newReview = restaurantReviews.getLast();
+        Review newReview = restaurantReviews.get(restaurantReviews.size() - 1);
 
         assertThat(restaurantReviews.get(previousReviewIndex).getUser()).isNotEqualTo(repeatedUser);
         assertThat(newReview).isEqualTo(repeatedUserReview);

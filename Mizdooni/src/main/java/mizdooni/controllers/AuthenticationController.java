@@ -6,7 +6,6 @@ import mizdooni.response.Response;
 import mizdooni.response.ResponseException;
 import mizdooni.service.ServiceUtils;
 import mizdooni.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 

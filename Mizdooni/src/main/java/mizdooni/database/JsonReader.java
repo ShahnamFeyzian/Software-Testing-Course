@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Objects;
 
 public class JsonReader {
     private static final String DATA_DIR_PATH = "src/main/java/mizdooni/database/data/";

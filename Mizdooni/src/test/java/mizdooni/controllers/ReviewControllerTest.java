@@ -1,7 +1,6 @@
 package mizdooni.controllers;
 
 import mizdooni.exceptions.*;
-import mizdooni.model.Reservation;
 import mizdooni.model.Restaurant;
 import mizdooni.model.Review;
 import mizdooni.response.PagedList;
@@ -24,11 +23,10 @@ import java.util.stream.Stream;
 import static mizdooni.controllers.ControllerUtils.PARAMS_BAD_TYPE;
 import static mizdooni.controllers.ControllerUtils.PARAMS_MISSING;
 import static mizdooni.controllers.ControllersTestUtils.*;
-import static mizdooni.controllers.ControllersTestUtils.createAddReviewParams;
 import static mizdooni.model.ModelTestUtils.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
-import static org.assertj.core.api.Assertions.*;
 
 public class ReviewControllerTest {
     private Restaurant restaurant;

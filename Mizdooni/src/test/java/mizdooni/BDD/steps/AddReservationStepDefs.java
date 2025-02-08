@@ -1,9 +1,12 @@
 package mizdooni.BDD.steps;
 
-import io.cucumber.java.en.*;
-import mizdooni.model.*;
-
-import java.util.List;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import mizdooni.model.Address;
+import mizdooni.model.Reservation;
+import mizdooni.model.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.spy;

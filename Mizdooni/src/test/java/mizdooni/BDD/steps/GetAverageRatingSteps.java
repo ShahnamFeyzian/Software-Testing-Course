@@ -1,12 +1,13 @@
 package mizdooni.BDD.steps;
 
 import io.cucumber.java.en.Given;
-import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import mizdooni.model.Rating;
+import mizdooni.model.Restaurant;
 
-import mizdooni.model.*;
-import static mizdooni.model.ModelTestUtils.*;
-
+import static mizdooni.model.ModelTestUtils.addReviewsWithRandomRatingWithUniqueUserToRestaurant;
+import static mizdooni.model.ModelTestUtils.getDefaultRestaurant;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class GetAverageRatingSteps {

@@ -1,14 +1,16 @@
 package mizdooni.BDD.steps;
 
 import io.cucumber.java.en.Given;
-import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
-
-import mizdooni.model.*;
-import static mizdooni.model.ModelTestUtils.*;
-import static org.assertj.core.api.Assertions.assertThat;
+import io.cucumber.java.en.When;
+import mizdooni.model.Restaurant;
+import mizdooni.model.Review;
+import mizdooni.model.User;
 
 import java.util.List;
+
+import static mizdooni.model.ModelTestUtils.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class AddReviewSteps {
 

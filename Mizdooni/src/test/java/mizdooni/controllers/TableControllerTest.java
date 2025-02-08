@@ -24,11 +24,12 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.List;
 
 import static mizdooni.controllers.ControllersTestUtils.*;
-import static mizdooni.model.ModelTestUtils.*;
+import static mizdooni.model.ModelTestUtils.getDefaultRestaurant;
+import static mizdooni.model.ModelTestUtils.getTableWithDefaultSeatsForRestaurant;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.assertj.core.api.Assertions.*;
 
 @WebMvcTest(TableController.class)
 @DirtiesContext

@@ -6,9 +6,8 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 
 import static mizdooni.model.ModelTestUtils.*;
-
-import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 
 public class UserTest {

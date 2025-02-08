@@ -6,7 +6,7 @@
 - CA2: Mock Testing
 - CA3: Graph Coverage
 - CA4: API Testing
-- CA5: Mutation Testing
+- CA5: Mutation Testing & Pipeline
 - CA6: Behavior Driven Development & GUI Testing
 
 ---

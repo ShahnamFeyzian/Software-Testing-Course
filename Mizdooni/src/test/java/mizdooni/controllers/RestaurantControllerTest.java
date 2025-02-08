@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(RestaurantController.class)
 @DirtiesContext
-public class RestaurantControllerTest {
+class RestaurantControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -53,7 +53,7 @@ public class RestaurantControllerTest {
     private User manager;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         restaurant = getDefaultRestaurant();
         manager = getDefaultManagerUser();
         when(restaurantService.getRestaurant(restaurant.getId())).thenReturn(restaurant);
@@ -63,14 +63,14 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    public void getRestaurant_BadParamTypeForRestaurantId_ResponsesBadRequest() throws Exception {
+    void getRestaurant_BadParamTypeForRestaurantId_ResponsesBadRequest() throws Exception {
         String url = "/restaurants/invalid_type_instead_integer";
 
         perform(mockMvc, url).andExpect(status().isBadRequest());
     }
 
     @Test
-    public void getRestaurant_RestaurantIdDoesNotExist_ResponsesNotFound() throws Exception {
+    void getRestaurant_RestaurantIdDoesNotExist_ResponsesNotFound() throws Exception {
         String url = "/restaurants/" + 1234567;
         when(restaurantService.getRestaurant(1234567)).thenReturn(null);
 
@@ -78,7 +78,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    public void getRestaurant_RestaurantExists_ResponsesOkAndReturnsRestaurant() throws Exception {
+    void getRestaurant_RestaurantExists_ResponsesOkAndReturnsRestaurant() throws Exception {
         String url = "/restaurants/" + restaurant.getId();
 
         ResultActions res = perform(mockMvc, url).andExpect(status().isOk());
@@ -88,14 +88,14 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    public void getRestaurants_PageIsNotPass_ResponsesBadRequest() throws Exception {
+    void getRestaurants_PageIsNotPass_ResponsesBadRequest() throws Exception {
         String url = "/restaurants";
 
         perform(mockMvc, url).andExpect(status().isBadRequest());
     }
 
     @Test
-    public void getRestaurants_PageValueIsInvalid_ResponsesBadRequest() throws Exception {
+    void getRestaurants_PageValueIsInvalid_ResponsesBadRequest() throws Exception {
         String url = "/restaurants?page=-1";
         RestaurantSearchFilter emptyFilter = new RestaurantSearchFilter();
         doThrow(new IllegalArgumentException("invalid page number")).
@@ -105,7 +105,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    public void getRestaurants_FilterIsEmpty_ResponsesOkAndReturnsAllRestaurants() throws Exception {
+    void getRestaurants_FilterIsEmpty_ResponsesOkAndReturnsAllRestaurants() throws Exception {
         String url = "/restaurants?page=" + DEFAULT_PAGE_NUM;
 
         ResultActions res = perform(mockMvc, url).andExpect(status().isOk());
@@ -117,7 +117,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    public void getRestaurants_FilterIsValid_ResponsesOkAndReturnsAllRestaurants() throws Exception {
+    void getRestaurants_FilterIsValid_ResponsesOkAndReturnsAllRestaurants() throws Exception {
         String url = "/restaurants?page=" + DEFAULT_PAGE_NUM + "&name=" + DEFAULT_NAME;
         RestaurantSearchFilter filter = new RestaurantSearchFilter();
         filter.setName(DEFAULT_NAME);
@@ -133,14 +133,14 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    public void getManagerRestaurants_BadParamTypeForManagerId_ResponsesBadRequest() throws Exception {
+    void getManagerRestaurants_BadParamTypeForManagerId_ResponsesBadRequest() throws Exception {
         String url = "/restaurants/manager/invalid_type_instead_integer";
 
         perform(mockMvc, url).andExpect(status().isBadRequest());
     }
 
     @Test
-    public void getManagerRestaurants_ManagerIdDoesNotExist_ResponsesOkAndReturnsEmptyList() throws Exception {
+    void getManagerRestaurants_ManagerIdDoesNotExist_ResponsesOkAndReturnsEmptyList() throws Exception {
         String url = "/restaurants/manager/" + 1234567;
         when(restaurantService.getManagerRestaurants(1234567)).thenReturn(List.of());
 
@@ -151,7 +151,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    public void getManagerRestaurants_ManagerIdExists_ResponsesOkAndReturnsRestaurant() throws Exception {
+    void getManagerRestaurants_ManagerIdExists_ResponsesOkAndReturnsRestaurant() throws Exception {
         String url = "/restaurants/manager/" + manager.getId();
 
         ResultActions res = perform(mockMvc, url).andExpect(status().isOk());
@@ -162,7 +162,7 @@ public class RestaurantControllerTest {
 
     @ParameterizedTest(name = "Missed field: {0}")
     @MethodSource("addRestaurantParamsButOneOfThemDoesNotExist")
-    public void addRestaurant_RequiredParamsDoNotExist_ResponsesBadRequest(String missedField, HashMap<String, String> params) throws Exception {
+    void addRestaurant_RequiredParamsDoNotExist_ResponsesBadRequest(String missedField, HashMap<String, String> params) throws Exception {
         String url = "/restaurants";
 
         perform(mockMvc, url, params.toString()).andExpect(status().isBadRequest());
@@ -182,7 +182,7 @@ public class RestaurantControllerTest {
 
     @ParameterizedTest(name = "Blank field: {0}")
     @MethodSource("addRestaurantParamsButOneOfThemIsBlank")
-    public void addRestaurant_ParamsAreBlank_ResponsesBadRequest(String blankField, HashMap<String, String> params) throws Exception {
+    void addRestaurant_ParamsAreBlank_ResponsesBadRequest(String blankField, HashMap<String, String> params) throws Exception {
         String url = "/restaurants";
 
         perform(mockMvc, url, params.toString()).andExpect(status().isBadRequest());
@@ -211,7 +211,7 @@ public class RestaurantControllerTest {
 
     @ParameterizedTest(name = "Bad type field: {0}")
     @MethodSource("addRestaurantParamsButOneOfThemHasBadType")
-    public void addRestaurant_ParamHasBadType_ResponsesBadRequest(String badTypeField, HashMap<String, String> params) throws Exception {
+    void addRestaurant_ParamHasBadType_ResponsesBadRequest(String badTypeField, HashMap<String, String> params) throws Exception {
         String url = "/restaurants";
 
         perform(mockMvc, url, params.toString()).andExpect(status().isBadRequest());
@@ -229,7 +229,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    public void addRestaurant_RepetitiveRestaurantName_ResponsesBadRequest() throws Exception {
+    void addRestaurant_RepetitiveRestaurantName_ResponsesBadRequest() throws Exception {
         String url = "/restaurants";
         doThrow(new DuplicatedRestaurantName()).when(restaurantService)
                 .addRestaurant(DEFAULT_NAME, DEFAULT_TYPE, DEFAULT_LOCAL_TIME, DEFAULT_LOCAL_TIME, DEFAULT_DESCRIPTION, getDefaultAddress(), DEFAULT_IMAGE_LINK);
@@ -239,7 +239,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    public void addRestaurant_LoggedInUserIsNotManager_ResponsesBadRequest() throws Exception {
+    void addRestaurant_LoggedInUserIsNotManager_ResponsesBadRequest() throws Exception {
         String url = "/restaurants";
         doThrow(new UserNotManager()).when(restaurantService)
                 .addRestaurant(DEFAULT_NAME, DEFAULT_TYPE, DEFAULT_LOCAL_TIME, DEFAULT_LOCAL_TIME, DEFAULT_DESCRIPTION, getDefaultAddress(), DEFAULT_IMAGE_LINK);
@@ -249,7 +249,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    public void addRestaurant_RestaurantTimeIsInvalid_ResponsesBadRequest() throws Exception {
+    void addRestaurant_RestaurantTimeIsInvalid_ResponsesBadRequest() throws Exception {
         String url = "/restaurants";
         doThrow(new InvalidWorkingTime()).when(restaurantService)
                 .addRestaurant(DEFAULT_NAME, DEFAULT_TYPE, DEFAULT_LOCAL_TIME, DEFAULT_LOCAL_TIME, DEFAULT_DESCRIPTION, getDefaultAddress(), DEFAULT_IMAGE_LINK);
@@ -259,7 +259,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    public void addRestaurant_EveryThingIsOk_ResponsesOkAndReturnsNewRestaurantId() throws Exception {
+    void addRestaurant_EveryThingIsOk_ResponsesOkAndReturnsNewRestaurantId() throws Exception {
         String url = "/restaurants";
         when(restaurantService.addRestaurant(DEFAULT_NAME, DEFAULT_TYPE, DEFAULT_LOCAL_TIME, DEFAULT_LOCAL_TIME, DEFAULT_DESCRIPTION, getDefaultAddress(), DEFAULT_IMAGE_LINK))
                 .thenReturn(1234);
@@ -272,14 +272,14 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    public void validateRestaurantName_DataIsNotPass_ResponsesBadRequest() throws Exception {
+    void validateRestaurantName_DataIsNotPass_ResponsesBadRequest() throws Exception {
         String url = "/validate/restaurant-name";
 
         perform(mockMvc, url).andExpect(status().isBadRequest());
     }
 
     @Test
-    public void validateRestaurantName_RestaurantWithDataNameIsExists_ResponsesConflict() throws Exception {
+    void validateRestaurantName_RestaurantWithDataNameIsExists_ResponsesConflict() throws Exception {
         String repetitiveName = "repetitive_name";
         String url = "/validate/restaurant-name?data=" + repetitiveName;
         when(restaurantService.restaurantExists(repetitiveName)).thenReturn(true);
@@ -288,7 +288,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    public void validateRestaurantName_RestaurantWithDataNameIsNotExist_ResponsesOk() throws Exception {
+    void validateRestaurantName_RestaurantWithDataNameIsNotExist_ResponsesOk() throws Exception {
         String uniqueName = "unique_name";
         String url = "/validate/restaurant-name?data=" + uniqueName;
         when(restaurantService.restaurantExists(uniqueName)).thenReturn(false);
@@ -297,7 +297,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    public void getRestaurantTypes_TouchTheEndpoint_ResponsesOkAndReturnsASetOfAllRestaurantTypes() throws Exception {
+    void getRestaurantTypes_TouchTheEndpoint_ResponsesOkAndReturnsASetOfAllRestaurantTypes() throws Exception {
         String url = "/restaurants/types";
         when(restaurantService.getRestaurantTypes()).thenReturn(Set.of(restaurant.getType()));
         String expectedSetStr = "[\"type\"]";
@@ -309,7 +309,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    public void getRestaurantLocations_TouchTheEndpoint_ResponsesOkAndReturnsMapOfCountryToSetOfCities() throws Exception {
+    void getRestaurantLocations_TouchTheEndpoint_ResponsesOkAndReturnsMapOfCountryToSetOfCities() throws Exception {
         String url = "/restaurants/locations";
         Map<String, Set<String>> returnedData = new HashMap<>();
         returnedData.put(restaurant.getAddress().getCountry(), Set.of(restaurant.getAddress().getCity()));

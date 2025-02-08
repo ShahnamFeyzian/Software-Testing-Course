@@ -22,20 +22,21 @@ import java.util.stream.Stream;
 
 import static mizdooni.controllers.ControllerUtils.PARAMS_BAD_TYPE;
 import static mizdooni.controllers.ControllerUtils.PARAMS_MISSING;
-import static mizdooni.controllers.ControllersTestUtils.*;
+import static mizdooni.controllers.ControllersTestUtils.createAddReviewParams;
+import static mizdooni.controllers.ControllersTestUtils.getAddReviewParamsKeyList;
 import static mizdooni.model.ModelTestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-public class ReviewControllerTest {
+class ReviewControllerTest {
     private Restaurant restaurant;
     private RestaurantService restaurantService;
     private ReviewService reviewService;
     private ReviewController controller;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         restaurant = mock(Restaurant.class);
         when(restaurant.getId()).thenReturn(DEFAULT_RESTAURANT_ID);
         when(restaurant.getName()).thenReturn(DEFAULT_NAME);
@@ -46,7 +47,7 @@ public class ReviewControllerTest {
     }
 
     @Test
-    public void getReviews_RestaurantIdDoesNotExist_ThrowsNotFound() {
+    void getReviews_RestaurantIdDoesNotExist_ThrowsNotFound() {
         when(restaurantService.getRestaurant(DEFAULT_RESTAURANT_ID)).thenReturn(null);
 
         assertThatThrownBy(() -> controller.getReviews(DEFAULT_RESTAURANT_ID, DEFAULT_PAGE_NUM))
@@ -57,7 +58,7 @@ public class ReviewControllerTest {
     }
 
     @Test
-    public void getReviews_GetReviewsFailed_ThrowsBadRequest() throws RestaurantNotFound {
+    void getReviews_GetReviewsFailed_ThrowsBadRequest() throws RestaurantNotFound {
         doThrow(new RestaurantNotFound()).when(reviewService).getReviews(DEFAULT_RESTAURANT_ID, DEFAULT_PAGE_NUM);
 
         assertThatThrownBy(() -> controller.getReviews(DEFAULT_RESTAURANT_ID, DEFAULT_PAGE_NUM))
@@ -67,7 +68,7 @@ public class ReviewControllerTest {
     }
 
     @Test
-    public void getReviews_SuccessfulGetReviews_ReturnsOkStatusWithPagedReviews() throws RestaurantNotFound {
+    void getReviews_SuccessfulGetReviews_ReturnsOkStatusWithPagedReviews() throws RestaurantNotFound {
         PagedList<Review> expectedReviews = mock(PagedList.class);
         when(reviewService.getReviews(DEFAULT_RESTAURANT_ID, DEFAULT_PAGE_NUM)).thenReturn(expectedReviews);
         String expectedMessage = "reviews for restaurant (" + DEFAULT_RESTAURANT_ID + "): " + DEFAULT_NAME;
@@ -83,7 +84,7 @@ public class ReviewControllerTest {
     }
 
     @Test
-    public void addReview_RestaurantIdDoesNotExist_ThrowsNotFound() {
+    void addReview_RestaurantIdDoesNotExist_ThrowsNotFound() {
         when(restaurantService.getRestaurant(DEFAULT_RESTAURANT_ID)).thenReturn(null);
 
         assertThatThrownBy(() -> controller.addReview(DEFAULT_RESTAURANT_ID, createAddReviewParams()))
@@ -95,7 +96,7 @@ public class ReviewControllerTest {
 
     @ParameterizedTest(name = "Missed field: {0}")
     @MethodSource("addReviewParamsButOneOfThemDoesNotExist")
-    public void addReview_NecessaryParamsAreNotExist_ThrowsBadRequest(String missedField, HashMap<String, Object> params) {
+    void addReview_NecessaryParamsAreNotExist_ThrowsBadRequest(String missedField, HashMap<String, Object> params) {
         assertThatThrownBy(() -> controller.addReview(DEFAULT_RESTAURANT_ID, params))
                 .isInstanceOf(ResponseException.class)
                 .hasMessage(PARAMS_MISSING)
@@ -115,7 +116,7 @@ public class ReviewControllerTest {
 
     @ParameterizedTest(name = "Bad type field: {0}")
     @MethodSource("addReviewParamsButOneOfThemIsNull")
-    public void addReview_PassedParamsDoNotHaveCorrectType_ThrowsBadRequest(String field, HashMap<String, Object> params) {
+    void addReview_PassedParamsDoNotHaveCorrectType_ThrowsBadRequest(String field, HashMap<String, Object> params) {
         assertThatThrownBy(() -> controller.addReview(DEFAULT_RESTAURANT_ID, params))
                 .isInstanceOf(ResponseException.class)
                 .hasMessage(PARAMS_BAD_TYPE)
@@ -134,7 +135,7 @@ public class ReviewControllerTest {
     }
 
     @Test
-    public void addReview_AddReviewFailed_ThrowsBadRequest()
+    void addReview_AddReviewFailed_ThrowsBadRequest()
             throws UserNotFound, ManagerCannotReview, UserHasNotReserved, RestaurantNotFound, InvalidReviewRating {
         doThrow(new RestaurantNotFound()).when(reviewService)
                 .addReview(DEFAULT_RESTAURANT_ID, getDefaultRating(), DEFAULT_COMMENT);
@@ -147,7 +148,7 @@ public class ReviewControllerTest {
     }
 
     @Test
-    public void addReview_SuccessAddReview_ReturnsOkStatus()
+    void addReview_SuccessAddReview_ReturnsOkStatus()
             throws UserNotFound, ManagerCannotReview, UserHasNotReserved, RestaurantNotFound, InvalidReviewRating {
         doNothing().when(reviewService).addReview(DEFAULT_RESTAURANT_ID, getDefaultRating(), DEFAULT_COMMENT);
 

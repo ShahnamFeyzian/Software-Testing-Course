@@ -9,18 +9,18 @@ import static mizdooni.model.ModelTestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class RestaurantTest {
+class RestaurantTest {
     private Restaurant restaurant;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         restaurant = getDefaultRestaurant();
         addTablesWithDefaultSeatsToRestaurant(restaurant, 3);
         addReviewsWithDefaultRatingWithUniqueUserToRestaurant(restaurant, 3);
     }
 
     @Test
-    public void getTable_GiveValidNumber_ReturnsTableWithGivenNumber() {
+    void getTable_GiveValidNumber_ReturnsTableWithGivenNumber() {
         int targetNumber = 2;
         Table targetTable = restaurant.getTable(targetNumber);
 
@@ -29,7 +29,7 @@ public class RestaurantTest {
     }
 
     @Test
-    public void getTable_GiveInvalidNumber_ReturnsNullTable() {
+    void getTable_GiveInvalidNumber_ReturnsNullTable() {
         int targetNumber = 5;
         Table targetTable = restaurant.getTable(targetNumber);
 
@@ -37,7 +37,7 @@ public class RestaurantTest {
     }
 
     @Test
-    public void addTable_AddNewTable_ItsTableNumberAndRestaurantTableListSizeIncreasesByOne() {
+    void addTable_AddNewTable_ItsTableNumberAndRestaurantTableListSizeIncreasesByOne() {
         restaurant.addTable(getTableWithDefaultSeatsForRestaurant(restaurant));
 
         List<Table> restaurantTables = restaurant.getTables();
@@ -49,7 +49,7 @@ public class RestaurantTest {
     }
 
     @Test
-    public void addReview_ReviewWithNewUser_AddsReviewToRestaurantReviewList() {
+    void addReview_ReviewWithNewUser_AddsReviewToRestaurantReviewList() {
         User newUser = getDefaultClientUser();
         Review newReview = getReviewWithDefaultRatingForUser(newUser);
 
@@ -62,7 +62,7 @@ public class RestaurantTest {
     }
 
     @Test
-    public void addReview_ReviewWithUserThatAlreadyHasReview_DeletesPreviousReview() {
+    void addReview_ReviewWithUserThatAlreadyHasReview_DeletesPreviousReview() {
         User repeatedUser = restaurant.getReviews().get(0).getUser();
         Review repeatedUserReview = getReviewWithDefaultRatingForUser(repeatedUser);
 
@@ -76,7 +76,7 @@ public class RestaurantTest {
     }
 
     @Test
-    public void getAverageRating_RestaurantWithNoReview_AllScoreAreZero() {
+    void getAverageRating_RestaurantWithNoReview_AllScoreAreZero() {
         Restaurant tempRestaurant = getDefaultRestaurant();
 
         Rating avgRating = tempRestaurant.getAverageRating();
@@ -88,7 +88,7 @@ public class RestaurantTest {
     }
 
     @Test
-    public void getAverageRating_RestaurantWithThreeRandomReviews_ResultIsAverageOfThem() {
+    void getAverageRating_RestaurantWithThreeRandomReviews_ResultIsAverageOfThem() {
         Restaurant randomRatedRestaurant = getDefaultRestaurant();
         addReviewsWithRandomRatingWithUniqueUserToRestaurant(randomRatedRestaurant, 3);
         List<Review> reviews = randomRatedRestaurant.getReviews();
@@ -106,7 +106,7 @@ public class RestaurantTest {
     }
 
     @Test
-    public void getStarCount_SpyRestaurantAndSpyRating_GetAverageRatingAndRatingsGetStarCountBeCalled() {
+    void getStarCount_SpyRestaurantAndSpyRating_GetAverageRatingAndRatingsGetStarCountBeCalled() {
         Restaurant spyRestaurant = spy(getDefaultRestaurant());
         Rating spyRating = spy(Rating.class);
         when(spyRestaurant.getAverageRating()).thenReturn(spyRating);
@@ -118,7 +118,7 @@ public class RestaurantTest {
     }
 
     @Test
-    public void getMaxSeatsNumber_RestaurantWithNoTable_ReturnsZero() {
+    void getMaxSeatsNumber_RestaurantWithNoTable_ReturnsZero() {
         Restaurant tempRestaurant = getDefaultRestaurant();
 
         int maxSeatsNumber = tempRestaurant.getMaxSeatsNumber();
@@ -127,7 +127,7 @@ public class RestaurantTest {
     }
 
     @Test
-    public void getMaxSeatsNumber_RestaurantWithTwoRandomTables_ReturnsBiggerNumber() {
+    void getMaxSeatsNumber_RestaurantWithTwoRandomTables_ReturnsBiggerNumber() {
         Restaurant restaurantWithRandomTables = getDefaultRestaurant();
         addTablesWithRandomSeatsToRestaurant(restaurantWithRandomTables, 2);
 

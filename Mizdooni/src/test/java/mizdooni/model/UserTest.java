@@ -10,14 +10,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 
-public class UserTest {
+class UserTest {
 
     private User clientUser;
     private Restaurant restaurant;
     private Reservation reservation;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         clientUser = getDefaultClientUser();
         restaurant = getDefaultRestaurant();
         addTablesWithDefaultSeatsToRestaurant(restaurant, 3);
@@ -28,7 +28,7 @@ public class UserTest {
     }
 
     @Test
-    public void addReservation_TempUserDummyReservation_AddsReservation() {
+    void addReservation_TempUserDummyReservation_AddsReservation() {
         Reservation dummyReservation = getDummyReservation();
         User user = getDefaultClientUser();
 
@@ -38,7 +38,7 @@ public class UserTest {
     }
 
     @Test
-    public void addReservation_TempUserDummyReservation_SetReservationNumberCalledWithZero() {
+    void addReservation_TempUserDummyReservation_SetReservationNumberCalledWithZero() {
         Reservation dummyReservation = getDummyReservation();
         User user = getDefaultClientUser();
 
@@ -48,7 +48,7 @@ public class UserTest {
     }
 
     @Test
-    public void checkReservation_EmptyUserWithEmptyReservation_ReturnsFalse() {
+    void checkReservation_EmptyUserWithEmptyReservation_ReturnsFalse() {
         User user = getDefaultClientUser();
 
         boolean hasReservation = user.checkReserved(restaurant);
@@ -57,7 +57,7 @@ public class UserTest {
     }
 
     @Test
-    public void checkReservation_ReservationHasBeenCanceled_ReturnsFalse() {
+    void checkReservation_ReservationHasBeenCanceled_ReturnsFalse() {
         when(reservation.isCancelled()).thenReturn(true);
 
         boolean hasReservation = clientUser.checkReserved(restaurant);
@@ -66,7 +66,7 @@ public class UserTest {
     }
 
     @Test
-    public void checkReservation_ReservationDateTimePassed_ReturnsFalse() {
+    void checkReservation_ReservationDateTimePassed_ReturnsFalse() {
         when(reservation.getDateTime()).thenReturn(LocalDateTime.now().minusDays(1));
 
         boolean hasReservation = clientUser.checkReserved(restaurant);
@@ -75,7 +75,7 @@ public class UserTest {
     }
 
     @Test
-    public void checkReservation_ReservationHasDifferentRestaurant_ReturnsFalse() {
+    void checkReservation_ReservationHasDifferentRestaurant_ReturnsFalse() {
         when(reservation.getRestaurant()).thenReturn(getDefaultRestaurant());
 
         boolean hasReservation = clientUser.checkReserved(restaurant);
@@ -84,7 +84,7 @@ public class UserTest {
     }
 
     @Test
-    public void checkReserved_HasProperReservation_ReturnsTrue() {
+    void checkReserved_HasProperReservation_ReturnsTrue() {
         when(reservation.isCancelled()).thenReturn(false);
         when(reservation.getDateTime()).thenReturn(LocalDateTime.now().plusDays(1));
         when(reservation.getRestaurant()).thenReturn(restaurant);
@@ -95,7 +95,7 @@ public class UserTest {
     }
 
     @Test
-    public void getReservation_HasProperReservation_ReturnsReservation() {
+    void getReservation_HasProperReservation_ReturnsReservation() {
         int reservationNumber = 4;
         Reservation targetReservation = getDummyReservation();
         when(targetReservation.getReservationNumber()).thenReturn(reservationNumber);
@@ -108,7 +108,7 @@ public class UserTest {
     }
 
     @Test
-    public void getReservation_ReservationHasDifferentReservationNumber_ReturnsNull() {
+    void getReservation_ReservationHasDifferentReservationNumber_ReturnsNull() {
         int reservationNumber = 4;
         Reservation targetReservation = getDummyReservation();
         when(targetReservation.getReservationNumber()).thenReturn(reservationNumber+1);
@@ -121,7 +121,7 @@ public class UserTest {
     }
 
     @Test
-    public void getReservation_ReservationHasBeenCanceled_ReturnsNull() {
+    void getReservation_ReservationHasBeenCanceled_ReturnsNull() {
         int reservationNumber = 4;
         Reservation targetReservation = getDummyReservation();
         when(targetReservation.getReservationNumber()).thenReturn(reservationNumber);
@@ -134,12 +134,12 @@ public class UserTest {
     }
 
     @Test
-    public void checkPassword_RightPassword_ReturnsTrue(){
+    void checkPassword_RightPassword_ReturnsTrue(){
         assertThat(clientUser.checkPassword(DEFAULT_PASS)).isTrue();
     }
 
     @Test
-    public void checkPassword_WrongPassword_ReturnsFalse(){
+    void checkPassword_WrongPassword_ReturnsFalse(){
         assertThat(clientUser.checkPassword(DEFAULT_PASS+"for being wrong")).isFalse();
     }
 }

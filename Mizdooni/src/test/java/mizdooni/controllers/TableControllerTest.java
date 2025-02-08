@@ -23,9 +23,9 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 
-import static mizdooni.controllers.ControllersTestUtils.*;
-import static mizdooni.model.ModelTestUtils.getDefaultRestaurant;
-import static mizdooni.model.ModelTestUtils.getTableWithDefaultSeatsForRestaurant;
+import static mizdooni.controllers.ControllersTestUtils.getDataNode;
+import static mizdooni.controllers.ControllersTestUtils.perform;
+import static mizdooni.model.ModelTestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(TableController.class)
 @DirtiesContext
-public class TableControllerTest {
+class TableControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -52,7 +52,7 @@ public class TableControllerTest {
     private Table table;
 
     @BeforeEach
-    public void setup() throws RestaurantNotFound {
+    void setup() throws RestaurantNotFound {
         restaurant = getDefaultRestaurant();
         table = getTableWithDefaultSeatsForRestaurant(restaurant);
         when(restaurantService.getRestaurant(restaurant.getId())).thenReturn(restaurant);
@@ -62,14 +62,14 @@ public class TableControllerTest {
     }
 
     @Test
-    public void getTables_RestaurantIdTypeIsInvalid_ResponsesBadRequest() throws Exception {
+    void getTables_RestaurantIdTypeIsInvalid_ResponsesBadRequest() throws Exception {
         String url = "/tables/invalid_restaurant_id";
 
         perform(mockMvc, url).andExpect(status().isBadRequest());
     }
 
     @Test
-    public void getTables_RestaurantWithIdDoesNotExist_ResponsesNotFound() throws Exception {
+    void getTables_RestaurantWithIdDoesNotExist_ResponsesNotFound() throws Exception {
         String url = "/tables/1234";
         when(restaurantService.getRestaurant(1234)).thenReturn(null);
 
@@ -77,7 +77,7 @@ public class TableControllerTest {
     }
 
     @Test
-    public void getTables_RestaurantWithIdIsExist_ResponsesOkAndReturnsItsTables() throws Exception {
+    void getTables_RestaurantWithIdIsExist_ResponsesOkAndReturnsItsTables() throws Exception {
         String url = "/tables/" + restaurant.getId();
         String expectedTableListStr = "[{\"tableNumber\":0,\"seatsNumber\":4}]";
 
@@ -88,14 +88,14 @@ public class TableControllerTest {
     }
 
     @Test
-    public void addTables_RestaurantIdIsInvalid_ResponseBadRequest() throws Exception {
+    void addTables_RestaurantIdIsInvalid_ResponseBadRequest() throws Exception {
         String url = "/tables/invalid_restaurant_id";
 
         perform(mockMvc, url).andExpect(status().isBadRequest());
     }
 
     @Test
-    public void addTables_NoRestaurantWithGivenIdExists_ResponsesNotFound() throws Exception {
+    void addTables_NoRestaurantWithGivenIdExists_ResponsesNotFound() throws Exception {
         String url = "/tables/1234";
         when(restaurantService.getRestaurant(1234)).thenReturn(null);
 
@@ -103,7 +103,7 @@ public class TableControllerTest {
     }
 
     @Test
-    public void addTables_SeatsNumberDoesNotExistsInParam_ResponsesBadRequest() throws Exception {
+    void addTables_SeatsNumberDoesNotExistsInParam_ResponsesBadRequest() throws Exception {
         String url = "/tables/" + restaurant.getId();
         String body = "{}";
 
@@ -111,7 +111,7 @@ public class TableControllerTest {
     }
 
     @Test
-    public void addTables_SeatsNumberHasNotIntegerTypeInParam_ResponsesBadRequest() throws Exception {
+    void addTables_SeatsNumberHasNotIntegerTypeInParam_ResponsesBadRequest() throws Exception {
         String url = "/tables/" + restaurant.getId();
         String body = "{\"seatsNumber\":\"invalid_type_for_seatsNumber\"}";
 
@@ -119,7 +119,7 @@ public class TableControllerTest {
     }
 
     @Test
-    public void addTables_NoUserLoggedInOrUserIsNotManager_ResponsesBadRequest() throws Exception {
+    void addTables_NoUserLoggedInOrUserIsNotManager_ResponsesBadRequest() throws Exception {
         String url = "/tables/" + restaurant.getId();
         String body = "{\"seatsNumber\":\"4\"}";
         doThrow(new UserNotManager()).when(tableService).addTable(restaurant.getId(), 4);
@@ -128,7 +128,7 @@ public class TableControllerTest {
     }
 
     @Test
-    public void addTables_LoggedInManagerIsNotRestaurantManager_ResponsesBadRequest() throws Exception {
+    void addTables_LoggedInManagerIsNotRestaurantManager_ResponsesBadRequest() throws Exception {
         String url = "/tables/" + restaurant.getId();
         String body = "{\"seatsNumber\":\"4\"}";
         doThrow(new InvalidManagerRestaurant()).when(tableService).addTable(restaurant.getId(), 4);
@@ -137,7 +137,7 @@ public class TableControllerTest {
     }
 
     @Test
-    public void addTables_EverythingIsOk_ResponsesOkAndTableAddedToRestaurant() throws Exception {
+    void addTables_EverythingIsOk_ResponsesOkAndTableAddedToRestaurant() throws Exception {
         String url = "/tables/" + restaurant.getId();
         String body = "{\"seatsNumber\":\"4\"}";
 

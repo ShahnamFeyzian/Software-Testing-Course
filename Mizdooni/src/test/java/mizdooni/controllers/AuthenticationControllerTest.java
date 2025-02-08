@@ -29,18 +29,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-public class AuthenticationControllerTest {
+class AuthenticationControllerTest {
     private UserService userService;
     private AuthenticationController controller;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         userService = mock(UserService.class);
         controller = new AuthenticationController(userService);
     }
 
     @Test
-    public void user_NoOneLoggedIn_ThrowsUnauthorized() {
+    void user_NoOneLoggedIn_ThrowsUnauthorized() {
         when(userService.getCurrentUser()).thenReturn(null);
 
         assertThatThrownBy(() -> controller.user())
@@ -51,7 +51,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void user_HasLoggedInUser_ReturnsOkStatusWithLoggedInUser() {
+    void user_HasLoggedInUser_ReturnsOkStatusWithLoggedInUser() {
         User dummyUser = mock(User.class);
         when(userService.getCurrentUser()).thenReturn(dummyUser);
 
@@ -64,7 +64,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void login_PassedParamsAreMissed_ThrowsBadRequest() {
+    void login_PassedParamsAreMissed_ThrowsBadRequest() {
         Map<String, String> params = new HashMap<>();
 
         assertThatThrownBy(() -> controller.login(params))
@@ -75,7 +75,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void login_SuccessfulLogin_ReturnsOkStatusWithLoggedInUser() {
+    void login_SuccessfulLogin_ReturnsOkStatusWithLoggedInUser() {
         Map<String, String> params = createLoginParams();
         User dummyUser = mock(User.class);
         when(userService.login(DEFAULT_NAME, DEFAULT_PASS)).thenReturn(true);
@@ -90,7 +90,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void login_LoginFailed_ThrowsUnauthorized() {
+    void login_LoginFailed_ThrowsUnauthorized() {
         Map<String, String> params = createLoginParams();
         when(userService.login(DEFAULT_NAME, DEFAULT_PASS)).thenReturn(false);
 
@@ -103,7 +103,7 @@ public class AuthenticationControllerTest {
 
     @ParameterizedTest(name = "Missed field: {0}")
     @MethodSource("signupParamsButOneOfThemDoesNotExist")
-    public void signup_NecessaryParamsAreNotExist_ThrowsBadRequest(String missedField, HashMap<String, Object> params) {
+    void signup_NecessaryParamsAreNotExist_ThrowsBadRequest(String missedField, HashMap<String, Object> params) {
         assertThatThrownBy(() -> controller.signup(params))
                 .isInstanceOf(ResponseException.class)
                 .hasMessage(PARAMS_MISSING)
@@ -123,7 +123,7 @@ public class AuthenticationControllerTest {
 
     @ParameterizedTest(name = "Bad type field: {0}")
     @MethodSource("signupParamsButOneOfThemIsNull")
-    public void signup_PassedParamsDoNotHaveCorrectType_ThrowsBadRequest(String field, HashMap<String, Object> params) {
+    void signup_PassedParamsDoNotHaveCorrectType_ThrowsBadRequest(String field, HashMap<String, Object> params) {
         assertThatThrownBy(() -> controller.signup(params))
                 .isInstanceOf(ResponseException.class)
                 .hasMessage(PARAMS_BAD_TYPE)
@@ -143,7 +143,7 @@ public class AuthenticationControllerTest {
 
     @ParameterizedTest(name = "Blank field: {0}")
     @MethodSource("signupParamsButOneOfTheAddressFieldIsBlank")
-    public void signup_PassedAddressParamHaveBlankField_ThrowsBadRequest(String blankField, HashMap<String, Object> params) {
+    void signup_PassedAddressParamHaveBlankField_ThrowsBadRequest(String blankField, HashMap<String, Object> params) {
         assertThatThrownBy(() -> controller.signup(params))
                 .isInstanceOf(ResponseException.class)
                 .hasMessage(PARAMS_MISSING)
@@ -171,7 +171,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void signup_SuccessfulSignup_ReturnsOkStatusWithLoggedInUser() throws DuplicatedUsernameEmail, InvalidUsernameFormat, InvalidEmailFormat {
+    void signup_SuccessfulSignup_ReturnsOkStatusWithLoggedInUser() throws DuplicatedUsernameEmail, InvalidUsernameFormat, InvalidEmailFormat {
         HashMap<String, Object> params = createSignupParams();
         doNothing().when(userService).signup(DEFAULT_NAME, DEFAULT_PASS, DEFAULT_EMAIL, getDefaultAddress(), User.Role.client);
         when(userService.login(DEFAULT_NAME, DEFAULT_PASS)).thenReturn(true);
@@ -187,7 +187,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void signup_SignupFailed_ThrowsBadRequest() throws DuplicatedUsernameEmail, InvalidUsernameFormat, InvalidEmailFormat {
+    void signup_SignupFailed_ThrowsBadRequest() throws DuplicatedUsernameEmail, InvalidUsernameFormat, InvalidEmailFormat {
         HashMap<String, Object> params = createSignupParams();
         doThrow(new InvalidEmailFormat()).when(userService)
                 .signup(DEFAULT_NAME, DEFAULT_PASS, DEFAULT_EMAIL, getDefaultAddress(), User.Role.client);
@@ -199,7 +199,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void logout_ThereIsLoggedInUser_ReturnsOkStatus() {
+    void logout_ThereIsLoggedInUser_ReturnsOkStatus() {
         when(userService.logout()).thenReturn(true);
 
         Response response = controller.logout();
@@ -209,7 +209,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void logout_ThereIsNoLoggedInUser_ThrowsUnauthorized() {
+    void logout_ThereIsNoLoggedInUser_ThrowsUnauthorized() {
         when(userService.logout()).thenReturn(false);
 
         assertThatThrownBy(() -> controller.logout())
@@ -220,7 +220,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void validateUsername_InvalidFormat_ThrowsBadRequest() {
+    void validateUsername_InvalidFormat_ThrowsBadRequest() {
         assertThatThrownBy(() -> controller.validateUsername(INVALID_NAME))
                 .isInstanceOf(ResponseException.class)
                 .hasMessage("invalid username format")
@@ -229,7 +229,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void validateUsername_UsernameAlreadyExists_ThrowsConflict() {
+    void validateUsername_UsernameAlreadyExists_ThrowsConflict() {
         when(userService.usernameExists(DEFAULT_NAME)).thenReturn(true);
 
         assertThatThrownBy(() -> controller.validateUsername(DEFAULT_NAME))
@@ -240,7 +240,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void validateUsername_ValidUsername_ReturnsOkStatus() {
+    void validateUsername_ValidUsername_ReturnsOkStatus() {
         when(userService.usernameExists(DEFAULT_NAME)).thenReturn(false);
 
         Response response = controller.validateUsername(DEFAULT_NAME);
@@ -250,7 +250,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void validateEmail_InvalidFormat_ThrowsBadRequest() {
+    void validateEmail_InvalidFormat_ThrowsBadRequest() {
         assertThatThrownBy(() -> controller.validateEmail(INVALID_EMAIL))
                 .isInstanceOf(ResponseException.class)
                 .hasMessage("invalid email format")
@@ -259,7 +259,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void validateEmail_EmailAlreadyExists_ThrowsConflict() {
+    void validateEmail_EmailAlreadyExists_ThrowsConflict() {
         when(userService.emailExists(DEFAULT_EMAIL)).thenReturn(true);
 
         assertThatThrownBy(() -> controller.validateEmail(DEFAULT_EMAIL))
@@ -270,7 +270,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void validateEmail_ValidEmail_ReturnsOkStatus() {
+    void validateEmail_ValidEmail_ReturnsOkStatus() {
         when(userService.emailExists(DEFAULT_EMAIL)).thenReturn(false);
 
         Response response = controller.validateEmail(DEFAULT_EMAIL);

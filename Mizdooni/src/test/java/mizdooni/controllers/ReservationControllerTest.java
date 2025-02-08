@@ -23,20 +23,19 @@ import java.util.stream.Stream;
 import static mizdooni.controllers.ControllerUtils.PARAMS_BAD_TYPE;
 import static mizdooni.controllers.ControllerUtils.PARAMS_MISSING;
 import static mizdooni.controllers.ControllersTestUtils.*;
-import static mizdooni.model.ModelTestUtils.DEFAULT_LOCAL_DATE;
-import static mizdooni.model.ModelTestUtils.DEFAULT_LOCAL_DATE_TIME;
+import static mizdooni.model.ModelTestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-public class ReservationControllerTest {
+class ReservationControllerTest {
     private Restaurant dummyRestaurant;
     private RestaurantService restaurantService;
     private ReservationService reservationService;
     private ReservationController controller;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         dummyRestaurant = mock(Restaurant.class);
         restaurantService = mock(RestaurantService.class);
         when(restaurantService.getRestaurant(DEFAULT_RESTAURANT_ID)).thenReturn(dummyRestaurant);
@@ -45,7 +44,7 @@ public class ReservationControllerTest {
     }
 
     @Test
-    public void getReservations_RestaurantIdDoesNotExist_ThrowsNotFound() {
+    void getReservations_RestaurantIdDoesNotExist_ThrowsNotFound() {
         when(restaurantService.getRestaurant(DEFAULT_RESTAURANT_ID)).thenReturn(null);
 
         assertThatThrownBy(() -> controller.getReservations(DEFAULT_RESTAURANT_ID, DEFAULT_TABLE_ID, null))
@@ -56,7 +55,7 @@ public class ReservationControllerTest {
     }
 
     @Test
-    public void getReservations_InvalidLocalDateFormat_ThrowsBadRequest() {
+    void getReservations_InvalidLocalDateFormat_ThrowsBadRequest() {
         assertThatThrownBy(() -> controller.getReservations(DEFAULT_RESTAURANT_ID, DEFAULT_TABLE_ID, "!@#$%^&*("))
                 .isInstanceOf(ResponseException.class)
                 .hasMessage(PARAMS_BAD_TYPE)
@@ -65,7 +64,7 @@ public class ReservationControllerTest {
     }
 
     @Test
-    public void getReservations_GettingReservationsFailed_ThrowsBadRequest()
+    void getReservations_GettingReservationsFailed_ThrowsBadRequest()
             throws UserNotManager, TableNotFound, InvalidManagerRestaurant, RestaurantNotFound {
         doThrow(new RestaurantNotFound()).when(reservationService)
                 .getReservations(DEFAULT_RESTAURANT_ID, DEFAULT_TABLE_ID, DEFAULT_LOCAL_DATE);
@@ -77,7 +76,7 @@ public class ReservationControllerTest {
     }
 
     @Test
-    public void getReservations_SuccessGettingReservations_ReturnsOkStatusWithReservations()
+    void getReservations_SuccessGettingReservations_ReturnsOkStatusWithReservations()
             throws UserNotManager, TableNotFound, InvalidManagerRestaurant, RestaurantNotFound {
         List<Reservation> expectedResult = new ArrayList<>();
         Reservation dummyReservation = mock(Reservation.class);
@@ -94,7 +93,7 @@ public class ReservationControllerTest {
     }
 
     @Test
-    public void getReservations_SuccessGettingReservationsAndLocalDateIsNull_ReturnsOkStatusWithReservations()
+    void getReservations_SuccessGettingReservationsAndLocalDateIsNull_ReturnsOkStatusWithReservations()
             throws UserNotManager, TableNotFound, InvalidManagerRestaurant, RestaurantNotFound {
         List<Reservation> expectedResult = new ArrayList<>();
         Reservation dummyReservation = mock(Reservation.class);
@@ -111,7 +110,7 @@ public class ReservationControllerTest {
     }
 
     @Test
-    public void getCustomerReservations_GetCustomerReservationsFailed_ThrowsBadRequest() throws UserNotFound, UserNoAccess {
+    void getCustomerReservations_GetCustomerReservationsFailed_ThrowsBadRequest() throws UserNotFound, UserNoAccess {
         doThrow(new UserNoAccess()).when(reservationService).getCustomerReservations(DEFAULT_CUSTOMER_ID);
 
         assertThatThrownBy(() -> controller.getCustomerReservations(DEFAULT_CUSTOMER_ID))
@@ -121,7 +120,7 @@ public class ReservationControllerTest {
     }
 
     @Test
-    public void getCustomerReservation_SuccessGetCustomerReservation_ReturnsOkStatusWithReservations()
+    void getCustomerReservation_SuccessGetCustomerReservation_ReturnsOkStatusWithReservations()
             throws UserNotFound, UserNoAccess {
         List<Reservation> expectedResult = new ArrayList<>();
         Reservation dummyReservation = mock(Reservation.class);
@@ -137,7 +136,7 @@ public class ReservationControllerTest {
     }
 
     @Test
-    public void getAvailableTimes_RestaurantIdDoesNotExist_ThrowsNotFound() {
+    void getAvailableTimes_RestaurantIdDoesNotExist_ThrowsNotFound() {
         when(restaurantService.getRestaurant(DEFAULT_RESTAURANT_ID)).thenReturn(null);
 
         assertThatThrownBy(() -> controller.getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUM, DEFAULT_DATE_FORMAT))
@@ -148,7 +147,7 @@ public class ReservationControllerTest {
     }
 
     @Test
-    public void getAvailableTimes_InvalidLocalDateFormat_ThrowsBadRequest() {
+    void getAvailableTimes_InvalidLocalDateFormat_ThrowsBadRequest() {
         assertThatThrownBy(() -> controller.getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUM, "!@#$%^"))
                 .isInstanceOf(ResponseException.class)
                 .hasMessage(PARAMS_BAD_TYPE)
@@ -157,7 +156,7 @@ public class ReservationControllerTest {
     }
 
     @Test
-    public void getAvailableTimes_GetAvailableTimesFailed_ThrowsBadRequest()
+    void getAvailableTimes_GetAvailableTimesFailed_ThrowsBadRequest()
             throws DateTimeInThePast, RestaurantNotFound, BadPeopleNumber {
         doThrow(new DateTimeInThePast()).when(reservationService).
                 getAvailableTimes(DEFAULT_RESTAURANT_ID, DEFAULT_PEOPLE_NUM, DEFAULT_LOCAL_DATE);
@@ -169,7 +168,7 @@ public class ReservationControllerTest {
     }
 
     @Test
-    public void getAvailableTimes_SuccessGetAvailableTimes_ReturnsOkStatusWithTimes()
+    void getAvailableTimes_SuccessGetAvailableTimes_ReturnsOkStatusWithTimes()
             throws DateTimeInThePast, RestaurantNotFound, BadPeopleNumber {
         List<LocalTime> expectedResult = new ArrayList<>();
         LocalTime dummyTime = mock(LocalTime.class);
@@ -186,7 +185,7 @@ public class ReservationControllerTest {
     }
 
     @Test
-    public void addReservation_RestaurantIdDoesNotExist_ThrowsNotFound() {
+    void addReservation_RestaurantIdDoesNotExist_ThrowsNotFound() {
         when(restaurantService.getRestaurant(DEFAULT_RESTAURANT_ID)).thenReturn(null);
 
         assertThatThrownBy(() -> controller.addReservation(DEFAULT_RESTAURANT_ID, null))
@@ -198,7 +197,7 @@ public class ReservationControllerTest {
 
     @ParameterizedTest(name = "Missed field: {0}")
     @MethodSource("addReservationParamsButOneOfThemDoesNotExist")
-    public void addReservation_NecessaryParamsAreNotExist_ThrowsBadRequest(String missedField, HashMap<String, String> params) {
+    void addReservation_NecessaryParamsAreNotExist_ThrowsBadRequest(String missedField, HashMap<String, String> params) {
         assertThatThrownBy(() -> controller.addReservation(DEFAULT_RESTAURANT_ID, params))
                 .isInstanceOf(ResponseException.class)
                 .hasMessage(PARAMS_MISSING)
@@ -218,7 +217,7 @@ public class ReservationControllerTest {
 
     @ParameterizedTest(name = "Bad type field: {0}")
     @MethodSource("addReservationParamsButOneOfThemIsNull")
-    public void addReservation_PassedParamsDoNotHaveCorrectType_ThrowsBadRequest(String field, HashMap<String, String> params) {
+    void addReservation_PassedParamsDoNotHaveCorrectType_ThrowsBadRequest(String field, HashMap<String, String> params) {
         assertThatThrownBy(() -> controller.addReservation(DEFAULT_RESTAURANT_ID, params))
                 .isInstanceOf(ResponseException.class)
                 .hasMessage(PARAMS_BAD_TYPE)
@@ -237,7 +236,7 @@ public class ReservationControllerTest {
     }
 
     @Test
-    public void addReservation_ReserveTableFailed_ThrowsBadRequest()
+    void addReservation_ReserveTableFailed_ThrowsBadRequest()
             throws UserNotFound, DateTimeInThePast, TableNotFound, ReservationNotInOpenTimes,
             ManagerReservationNotAllowed, RestaurantNotFound, InvalidWorkingTime {
         doThrow(new DateTimeInThePast()).when(reservationService).
@@ -250,7 +249,7 @@ public class ReservationControllerTest {
     }
 
     @Test
-    public void addReservation_SuccessReserveTable_ReturnsOkStatusWithReservation()
+    void addReservation_SuccessReserveTable_ReturnsOkStatusWithReservation()
             throws UserNotFound, DateTimeInThePast, TableNotFound, ReservationNotInOpenTimes,
             ManagerReservationNotAllowed, RestaurantNotFound, InvalidWorkingTime {
         Reservation dummyReservation = mock(Reservation.class);
@@ -266,7 +265,7 @@ public class ReservationControllerTest {
     }
 
     @Test
-    public void cancelReservation_CancelReservationFailed_ThrowsBadRequest()
+    void cancelReservation_CancelReservationFailed_ThrowsBadRequest()
             throws ReservationCannotBeCancelled, UserNotFound, ReservationNotFound {
         doThrow(new UserNotFound()).when(reservationService).cancelReservation(DEFAULT_RESERVATION_NUM);
 
@@ -276,7 +275,7 @@ public class ReservationControllerTest {
                 .isEqualTo(HttpStatus.BAD_REQUEST);
     }
     @Test
-    public void cancelReservation_SuccessfulCancelReservation_ReturnsOkStatus()
+    void cancelReservation_SuccessfulCancelReservation_ReturnsOkStatus()
             throws ReservationCannotBeCancelled, UserNotFound, ReservationNotFound {
         doNothing().when(reservationService).cancelReservation(DEFAULT_RESERVATION_NUM);
 

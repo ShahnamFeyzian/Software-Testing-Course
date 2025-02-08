@@ -18,15 +18,20 @@ public class ModelTestUtils {
     public static final String DEFAULT_TYPE = "type";
     public static final LocalDate DEFAULT_LOCAL_DATE = LocalDate.of(2000, 1, 1);
     public static final LocalTime DEFAULT_LOCAL_TIME = LocalTime.of(12, 0, 0);
-    public static final LocalDateTime DEFAULT_LOCAL_DATE_TIME = LocalDateTime.of(
-            2000, 1, 1, 12, 0, 0
-    );
+    public static final LocalDateTime DEFAULT_LOCAL_DATE_TIME = LocalDateTime.of(2000, 1, 1, 12, 0, 0);
     public static final String DEFAULT_DESCRIPTION = "description";
     public static final String DEFAULT_IMAGE_LINK = "image_link";
     public static final int DEFAULT_SEATS_NUMBER = 4;
     public static final String DEFAULT_COMMENT = "comment";
     public static final double DEFAULT_RATING_NUMBER = 4.5;
     public static final boolean DEFAULT_CANCELLED_RESERVATION = false;
+    public static final int DEFAULT_RESTAURANT_ID = 123;
+    public static final int DEFAULT_TABLE_ID = 123;
+    public static final int DEFAULT_CUSTOMER_ID = 123;
+    public static final int DEFAULT_RESERVATION_NUM = 2;
+    public static final int DEFAULT_PEOPLE_NUM = 4;
+    public static final int DEFAULT_PAGE_NUM = 1;
+    public static final int DEFAULT_RESTAURANT_PAGE_SIZE = 12;
 
 
     public static Rating getDefaultRating() {

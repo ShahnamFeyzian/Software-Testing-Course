@@ -38,13 +38,7 @@ public class ControllersTestUtils {
     public static final String END_TIME_KEY = "endTime";
     public static final String DESCRIPTION_KEY = "description";
     public static final String IMAGE_LINK_KEY = "image";
-    public static final int DEFAULT_RESTAURANT_ID = 123;
-    public static final int DEFAULT_TABLE_ID = 123;
-    public static final int DEFAULT_CUSTOMER_ID = 123;
-    public static final int DEFAULT_RESERVATION_NUM = 2;
-    public static final int DEFAULT_PEOPLE_NUM = 4;
-    public static final int DEFAULT_PAGE_NUM = 1;
-    public static final int DEFAULT_RESTAURANT_PAGE_SIZE = 12;
+
     public static HashMap<String, String> createLoginParams() {
         HashMap<String, String> params = new HashMap<>();
         params.put(USER_NAME_KEY, DEFAULT_NAME);
